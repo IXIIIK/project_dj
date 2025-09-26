@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <title>СПОДРУЧНО — быстрые онлайн займы на карту</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/static/style.css?v=17">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}?v=17">
 </head>
 <body>
 
@@ -33,10 +34,10 @@
 
     <!-- картинки по краям -->
     <div class="hero-cards">
-      <img class="hero-card-1" src="/static/img/hero-money.png" alt="" aria-hidden="true">
-      <img class="hero-card-2" src="/static/img/hero-money2.png" alt="" aria-hidden="true">
+      <img class="hero-card-1" src="{% static 'img/hero-money.png' %}" alt="" aria-hidden="true">
+      <img class="hero-card-2" src="{% static 'img/hero-money2.png' %}" alt="" aria-hidden="true">
     </div>
-    <img class="hero-art hero-card"  src="/static/img/hero-card.jpg"  alt="" aria-hidden="true">
+    <img class="hero-art hero-card"  src="{% static 'img/hero-card.jpg' %}"  alt=""   aria-hidden="true">
 
     <!-- текст по центру -->
     <div class="hero-copy">
@@ -85,7 +86,7 @@
     <p>Сервис Spodruchno.ru бесплатно предоставляет информацию о займах. Сервис не осуществляет выдачу займов и их обслуживание. Сервис не является представительством или агентом МФО. Сервис не регулирует и не участвует в отношениях между пользователем и МФО. МФО, информация о которых содержится в сервисе, имеют необходимые лицензии. Информация о займах не является офертой или публичной офертой. Условия выдачи конкретного займа определяются на сайте конкретного МФО в индивидуальном порядке. Условия неуплаты содержатся на сайтах МФО. Персональные данные пользователей сервисом не собираются и не хранятся.</p>
   </div>
   <div class="footer-logo__inner">
-    <img src="/static/img/logo.png" alt="СПОДРУЧНО">
+    <img src="{% static 'img/logo.png' %}" alt="СПОДРУЧНО">
   </div>
 </footer>
 

@@ -7,23 +7,27 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# зависимости для psycopg и Pillow
-RUN apt-get update && apt-get install -y build-essential libpq-dev libjpeg-dev zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+# системные зависимости для psycopg и Pillow (Debian Bookworm)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    libjpeg62-turbo-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libwebp-dev \
+  && rm -rf /var/lib/apt/lists/*
 
+# зависимости python
 COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt && pip install gunicorn
 
 # проект
 COPY . /app
 
-# статические/медиа директории
-RUN mkdir -p /app/static_root /app/media && chmod -R 755 /app
-
-# gunicorn
-RUN pip install gunicorn
-
-# скрипт запуска
+# каталоги для статики/медиа
+RUN mkdir -p /app/static_root /app/media
 RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
+
+CMD ["/app/entrypoint.sh"]

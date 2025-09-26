@@ -2,15 +2,14 @@
 from pathlib import Path
 import os
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
-CSRF_TRUSTED_ORIGINS = [u.strip() for u in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if u.strip()]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS","*").split(",")
+CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if x.strip()]
 DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-not-secret")
-DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -54,8 +53,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASS"),
+        "HOST": os.getenv("DB_HOST","db"),
+        "PORT": os.getenv("DB_PORT","5432"),
     }
 }
 
@@ -65,8 +68,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "static_root"
+STATIC_ROOT = BASE_DIR / "static_root"          # куда collectstatic кладёт
+STATICFILES_DIRS = [BASE_DIR / "static"]        # ОТКУДА забирать твой style.css и img/
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
