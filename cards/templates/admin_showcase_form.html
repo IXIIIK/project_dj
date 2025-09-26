@@ -1,0 +1,24 @@
+<!doctype html><html lang="ru"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if showcase %}Редактировать{% else %}Добавить{% endif %} витрину</title>
+    <link rel="stylesheet" href="/static/style.css?v=17">
+    <style>
+    .wrap{max-width:640px;margin:24px auto;padding:0 18px}
+    form{display:flex;flex-direction:column;gap:16px;background:#fff;padding:24px;border-radius:12px;box-shadow:var(--shadow)}
+    label{font-weight:600;margin-bottom:4px;display:block}
+    input,textarea{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%}
+    .btn{padding:10px 16px;border-radius:6px;background:#5A7BFF;color:#fff;text-decoration:none;border:none;cursor:pointer}
+    </style></head><body>
+    <div class="wrap">
+      <h2>{% if showcase %}Редактировать{% else %}Добавить{% endif %} витрину</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div><label for="id_name">Название</label>{{ form.name }}</div>
+        <div><label for="id_slug">Slug</label>{{ form.slug }}</div>
+        <div><label for="id_domains">Домен(ы)</label>{{ form.domains }}</div>
+        <button type="submit" class="btn">Сохранить</button>
+      </form>
+      <p><a href="{% url 'showcases_admin' %}">← Назад к витринам</a></p>
+    </div>
+    </body></html>
+    

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Вход — СПОДРУЧНО</title>
+  <link rel="stylesheet" href="/static/style.css?v=17">
+  <style>
+    body{
+      background:#f5f7fa;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      margin:0;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    .login-box{
+      width:360px;
+      background:#fff;
+      padding:32px 28px;
+      border-radius:16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+    }
+    .login-box h2{
+      text-align:center;
+      margin:0 0 20px;
+      font-size:22px;
+      color:#2d3748;
+    }
+    .field{margin-bottom:16px}
+    label{display:block;margin-bottom:6px;font-weight:600;font-size:14px;color:#4a5568}
+    input{
+      width:100%;
+      padding:10px;
+      border:1px solid #cbd5e0;
+      border-radius:8px;
+      font-size:14px;
+    }
+    input:focus{
+      outline:none;
+      border-color:#5A7BFF;
+      box-shadow:0 0 0 2px rgba(90,123,255,.3);
+    }
+    .btn{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:8px;
+      background:#5A7BFF;
+      color:#fff;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.2s;
+    }
+    .btn:hover{background:#4664d6}
+    .errorlist{
+      color:#e53e3e;
+      font-size:13px;
+      margin:-8px 0 10px;
+      list-style:none;
+      padding:0;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Вход</h2>
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="id_username">Имя пользователя</label>
+        {{ form.username }}
+      </div>
+
+      <div class="field">
+        <label for="id_password">Пароль</label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="btn">Войти</button>
+    </form>
+  </div>
+</body>
+</html>

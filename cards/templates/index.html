@@ -1,0 +1,107 @@
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>СПОДРУЧНО — быстрые онлайн займы на карту</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css?v=17">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/"><img class="brand-img" src="/static/img/logo.png" alt="СПОДРУЧНО"></a>
+</header>
+
+<section class="hero">
+  <div class="hero-strip">
+    <!-- дуги у краёв -->
+    <svg class="hero-confetti" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="hcA" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#7FE9FF"/><stop offset="1" stop-color="#5A7BFF"/>
+        </linearGradient>
+        <filter id="hg" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g filter="url(#hg)" opacity=".9" fill="none" stroke="url(#hcA)" stroke-linecap="round">
+        <path d="M90 18 A78 78 0 0 1 190 118" stroke-width="22"/>
+        <path d="M1250 22 A82 82 0 0 1 1350 132" stroke-width="24"/>
+      </g>
+    </svg>
+
+    <!-- картинки по краям -->
+    <div class="hero-cards">
+      <img class="hero-card-1" src="/static/img/hero-money.png" alt="" aria-hidden="true">
+      <img class="hero-card-2" src="/static/img/hero-money2.png" alt="" aria-hidden="true">
+    </div>
+    <img class="hero-art hero-card"  src="/static/img/hero-card.jpg"  alt="" aria-hidden="true">
+
+    <!-- текст по центру -->
+    <div class="hero-copy">
+      <h1>БЫСТРЫЕ ОНЛАЙН ЗАЙМЫ НА КАРТУ!</h1>
+      <p>Оставьте заявку в 3 и более компаниях для быстрого получения нужной суммы</p>
+    </div>
+  </div>
+</section>
+
+
+
+<main class="wrap">
+  <section class="grid">
+    {% for c in cards %}
+      
+      <article class="card">
+        <div class="card-top">
+          <div class="card-logo">
+            {% if c.logo %}
+              <img src="{{ c.logo.url }}" alt="">
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card-price">{{ c.price }} ₽</div>
+
+        <div class="card-lines">
+          <span>{{ c.rate_line|default:'0% в день' }}</span>
+          <span>{{ c.age_line|default:'от 18 лет' }}</span>
+        </div>
+
+        <a class="btn" href="" data-href="{{ c.btn_url|default:'#' }}"{% if c.btn_url %} target="_blank" rel="noopener"{% endif %}>ПОЛУЧИТЬ ДЕНЬГИ</a>
+
+        <div class="fine-print">{{ c.fine_print|default:'Решение по заявке принимается в течение нескольких минут.' }}</div>
+      </article>
+    {% endfor %}
+
+    {% if not cards %}
+      <article class="card"><div style="text-align:center">Нет карточек. Зайдите в <a href="/admin/login.php">админку</a> и добавьте.</div></article>
+    {% endif %}
+  </section>
+</main>
+
+<footer class="footer-band">
+  <div class="inner">
+    <p>Сервис Spodruchno.ru бесплатно предоставляет информацию о займах. Сервис не осуществляет выдачу займов и их обслуживание. Сервис не является представительством или агентом МФО. Сервис не регулирует и не участвует в отношениях между пользователем и МФО. МФО, информация о которых содержится в сервисе, имеют необходимые лицензии. Информация о займах не является офертой или публичной офертой. Условия выдачи конкретного займа определяются на сайте конкретного МФО в индивидуальном порядке. Условия неуплаты содержатся на сайтах МФО. Персональные данные пользователей сервисом не собираются и не хранятся.</p>
+  </div>
+  <div class="footer-logo__inner">
+    <img src="/static/img/logo.png" alt="СПОДРУЧНО">
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const params = window.location.search; // ?utm_source=...
+  if (!params) return;
+
+  document.querySelectorAll('.card a.btn').forEach(link => {
+    const originalHref = link.getAttribute('data-href'); // читаем оригинальный URL
+    if (originalHref && originalHref !== '#') {
+      const sep = originalHref.includes('?') ? '&' : '?';
+      link.setAttribute('href', originalHref + sep + params.slice(1));
+    }
+  });
+});
+</script>
+</body>
+</html>

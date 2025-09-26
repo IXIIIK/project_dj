@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Карточки — {{ showcase.name }}</title>
+  <link rel="stylesheet" href="/static/style.css?v=17">
+  <style>
+    .wrap{max-width:980px;margin:24px auto;padding:0 18px}
+    .crumbs{margin:0 0 12px}
+    .crumbs a{color:#5A7BFF;text-decoration:none}
+    .table{width:100%;border-collapse:collapse;background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+    .table th,.table td{padding:12px 14px;border-bottom:1px solid #eef1f6;font-size:14px;vertical-align:middle}
+    .table th{background:#f9fbff;text-align:left;color:#4a5568}
+    .actions a{margin-right:8px}
+    .top-actions{display:flex;justify-content:space-between;align-items:center;margin:0 0 16px}
+    .btn{padding:6px 12px;border-radius:6px;background:#5A7BFF;color:#fff;text-decoration:none}
+    .pager{display:flex;gap:8px;justify-content:center;margin:16px 0}
+    .pager a,.pager span{padding:6px 10px;border-radius:6px;background:#f1f5f9;text-decoration:none}
+    .pager .current{background:#5A7BFF;color:#fff}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumbs">
+    <a href="{% url 'showcases_admin' %}">← К витринам</a>
+  </div>
+
+  <div class="top-actions">
+    <h2>Карточки — {{ showcase.name }}</h2>
+    <a class="btn" href="{% url 'card_add' showcase.id %}">Добавить карточку</a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>№</th>
+        <th>Позиция</th>
+        <th>Лого</th>
+        <th>Цена</th>
+        <th>Ссылка кнопки</th>
+        <th>Действия</th>
+        <th>Видимость</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in page_obj.object_list %}
+      <tr>
+        <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+        <td>{{ c.order_index }}</td>
+        <td>{% if c.logo %}<img src="{{ c.logo.url }}" style="height:36px" alt="{{ c.title }}">{% endif %}</td>
+        <td>{{ c.price }} ₽</td>
+        <td>{% if c.btn_url %}<a href="{{ c.btn_url }}" target="_blank" rel="noopener">перейти</a>{% else %}—{% endif %}</td>
+        <td class="actions">
+          <a href="{% url 'card_edit' showcase.id c.id %}">Редактировать</a>
+          <a href="{% url 'card_delete' showcase.id c.id %}" onclick="return confirm('Удалить карточку?')">Удалить</a>
+        </td>
+        <td>
+          <a href="{% url 'card_toggle' showcase.id c.id %}">{% if c.active %} 👁️ {% else %} 🚫 {% endif %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">Пока пусто. Нажмите «Добавить карточку».</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <div class="pager">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← Назад</a>{% endif %}
+    <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Вперёд →</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

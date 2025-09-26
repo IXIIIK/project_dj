@@ -1,0 +1,327 @@
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#1d2a3d;
+  --muted:#6b7280;
+  --brand:#2f6fff;
+  --brand-2:#0e5bff;
+  --shadow:0 12px 28px rgba(22,44,90,.10);
+  --radius:20px;
+
+  --card-pad:16px;
+  --logo-h:72px;
+
+  /* пунктир под суммой */
+  --dash:16px;
+  --gap:12px;
+  --thick:1px;
+  --line-color:rgba(16,35,63,.20);
+}
+
+/* базовая типографика */
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;background:var(--bg);color:var(--text);
+  font:16px/1.45 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1; /* растягиваем контент */
+}
+footer {
+  margin-top: auto; /* прижимаем футер вниз */
+}
+
+/* Шапка */
+.site-header{background:#fff;padding:18px;border-bottom:1px solid #eef2f7}
+.brand{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:center}
+.brand-img{height:44px;display:block}
+
+/* ==== HERO v4: full-bleed (во всю ширину экрана) с текстурами ==== */
+.hero{
+  position:relative;
+  width:100vw;              /* ширина экрана */
+  left:50%;                 /* трюк для полноширинного блока внутри центр-страницы */
+  right:50%;
+  margin-left:-50vw;
+  margin-right:-50vw;
+  margin-top:0;
+  margin-bottom:28px;
+  overflow:visible;
+}
+
+.hero-strip{
+  position:relative;
+  height:160px;             /* высота ленты */
+  width:100%;               /* во всю ширину монитора */
+  background:linear-gradient(90deg,#2c66d1 0%, #275cc2 55%, #2b6fec 100%);
+  /* белые линии сверху/снизу */
+  box-shadow:
+    inset 0 4px 0 #fff,
+    inset 0 -4px 0 #fff;
+  overflow:hidden;          /* обрезаем всё по краям ленты */
+  isolation:isolate;
+}
+
+/* «Пятна» внутри ленты (как на референсе) */
+.hero-strip::before{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0; pointer-events:none;
+  opacity:.95;
+  background:
+    radial-gradient(95px 70px  at 12% 26%, rgba(120,180,255,.32), transparent 62%),
+    radial-gradient(140px 100px at 30% 18%, rgba(40,140,255,.26),  transparent 68%),
+    radial-gradient(200px 140px at 82% 28%, rgba(0,190,170,.22),  transparent 70%),
+    radial-gradient(160px 120px at 66% 72%, rgba(90,160,255,.18),  transparent 74%),
+    radial-gradient(120px 90px  at 18% 76%, rgba(110,170,255,.16), transparent 72%);
+  filter:saturate(110%);
+}
+
+/* дуги по краям */
+.hero-confetti{position:absolute; inset:0; z-index:1; pointer-events:none}
+
+/* картинки внутри ленты */
+.hero-art{
+  position:absolute; bottom:-12px; z-index:2; pointer-events:none;
+  filter:drop-shadow(0 12px 28px rgba(0,0,0,.25));
+}
+.hero-card{  /* карта справа */
+  right:clamp(16px,6vw,64px);
+  width:clamp(220px,22vw,320px);
+  transform:rotate(8deg);
+  border-radius:12px;
+}
+.hero-money{ /* деньги слева */
+  left:clamp(16px,6vw,64px);
+  width:clamp(240px,24vw,360px);
+  transform:rotate(-10deg);
+}
+
+.hero-card-2 {
+  right: clamp(100px, 14vw, 160px); /* немного левее первой карты */
+  width: clamp(220px, 22vw, 320px);
+  transform: rotate(2deg);
+  border-radius: 12px;
+  z-index: 2;
+}
+
+
+@media (max-width:560px){
+  .hero-strip{height:130px}
+  .hero-card{width:clamp(200px,56vw,240px)}
+}
+
+/* текст по центру */
+.hero-copy{
+  position:relative; z-index:3; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; color:#fff;
+}
+.hero-copy h1{margin:0 0 8px;font-weight:900;font-size:26px;text-transform:uppercase;color:#fff;letter-spacing:.2px}
+.hero-copy p{margin:0;color:rgba(255,255,255,.95)}
+
+/* Сетка карточек (центр-контейнер) */
+.wrap{max-width:1080px;margin:0 auto 40px;padding:0 18px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(4,1fr)}
+@media (max-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+
+/* Карточка */
+.card{
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:var(--card-pad);display:flex;flex-direction:column;gap:10px;min-height:210px;
+  transition:transform .15s,box-shadow .15s;overflow:hidden;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(22,44,90,.14)}
+
+/* белая шапка-лого на всю ширину */
+.card-top{
+  display:flex;align-items:center;justify-content:center;
+  margin:calc(-1*var(--card-pad)) calc(-1*var(--card-pad)) 8px;
+  padding:10px 14px;background:#fff;
+  border-bottom:1px solid #e6ecf6;border-radius:var(--radius) var(--radius) 0 0;
+}
+.card-logo{width:100%;height:var(--logo-h);display:flex;align-items:center;justify-content:center}
+.card-logo img{max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain}
+
+/* Сумма + пунктир */
+.card-price{
+  position:relative;text-align:center;font-size:23px;font-weight:900;letter-spacing:.2px;
+  padding-bottom:10px;margin-bottom:8px;
+}
+.card-price::after{
+  content:"";position:absolute;left:calc(-1*var(--card-pad));right:calc(-1*var(--card-pad));bottom:0;height:var(--thick);
+  background-image:repeating-linear-gradient(90deg,var(--line-color) 0,var(--line-color) var(--dash),transparent var(--dash),transparent calc(var(--dash) + var(--gap)));
+}
+@media (min-resolution:2dppx){:root{--line-color:rgba(16,35,63,.24)}}
+
+/* условия */
+.card-lines{display:flex;align-items:center;justify-content:space-between;color:#6b768a;font-size:12px;margin-top:4px}
+
+/* кнопка */
+.btn{
+  margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 18px;border-radius:16px;text-decoration:none;font-weight:800;text-transform:uppercase;font-size:14px;color:#fff;
+  background:linear-gradient(180deg,var(--brand),var(--brand-2));box-shadow:0 8px 22px rgba(47,111,255,.35);
+}
+
+/* сноска */
+.fine-print{margin-top:8px;color:#98a1b3;font-size:11px;line-height:1.35;text-align:center}
+
+/* Подвал */
+.footer-band{position:relative;margin-top:40px;background: #0f2f7a;color:#e7efff;overflow:hidden; padding-bottom: 30px;}
+.footer-band::before{content:"";position:absolute;inset:0;opacity:.6;z-index:0;background:
+  radial-gradient(120px 90px at 12% 30%, rgba(61,119,255,.30), transparent 60%),
+  radial-gradient(180px 120px at 80% 25%, rgba(23,104,255,.20), transparent 62%),
+  radial-gradient(140px 100px at 70% 70%, rgba(0,180,160,.18), transparent 68%)}
+.footer-band .inner{position:relative;z-index:1;max-width:1000px; margin:0 auto;padding:28px 18px;font-size:12px;line-height:1.6}
+.footer-band .inner p {text-align: center;}
+.footer-band a{color:#fff;text-decoration:underline}
+.footer-brand{display:flex;justify-content:center;align-items:center;margin-top:16px}
+.footer-brand img{height:40px;display:block}
+
+
+/* === HERO: не обрезать картинки и держать белые полосы сверху/снизу === */
+
+/* раньше тут было overflow:hidden + inset box-shadow для белых линий */
+.hero-strip{
+  overflow: visible;               /* даём картинкам выступать за ленту */
+  box-shadow: none;                /* убираем линии из box-shadow, рисуем псевдоэлементом */
+  position: relative;              /* (на всякий случай) — якорь для ::after */
+}
+
+/* белые линии всегда поверх контента ленты (картинок/текста/пятен) */
+.hero-strip::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:5;                       /* выше текста и картинок внутри ленты */
+  pointer-events:none;
+  background:
+    linear-gradient(#ffffff, #ffffff) top/100% 4px no-repeat,
+    linear-gradient(#ffffff, #ffffff) bottom/100% 4px no-repeat;
+}
+
+/* порядок слоёв внутри ленты, чтобы всё выглядело правильно */
+.hero-strip::before{ z-index:0; }  /* «пятна» под всем */
+.hero-confetti{ z-index:1; }       /* дуги */
+.hero-art{ z-index:2; }            /* картинки по краям */
+.hero-copy{ z-index:3; }           /* текст по центру */
+
+/* === HERO: убрать белые линии сверху/снизу ленты === */
+.hero-strip{
+  box-shadow: none !important;   /* на всякий случай, если где-то осталось */
+}
+.hero-strip::after{
+  content: none !important;      /* линии рисовались тут — отключаем */
+}
+
+/* === Белая полоса с логотипом сразу под синим подвалом === */
+.footer-logo {
+  width: 100%; /* вместо трюка с 100vw */
+  background: linear-gradient(180deg,#153b84 0%, #0f2f7a 100%);
+  padding: 16px 0;
+}
+
+.footer-logo__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* центрируем логотип */
+}
+
+.footer-logo__inner img {
+  height: 42px;
+  display: block;
+  filter: brightness(1.2);
+}
+
+@media (max-width:480px){
+  .footer-logo__inner img{ height:36px; }
+}
+
+@media (max-width: 768px) {
+  .hero-art { display: none; } /* убираем все картинки */
+  .hero-strip { height: 200px; } /* делаем выше */
+  
+  
+}
+
+.hero-cards {
+  position: absolute;
+  left: clamp(16px, 6vw, 64px); /* как у hero-money */
+  bottom: -12px;
+  display: flex;
+  gap: 20px;
+  z-index: 2;
+}
+
+.hero-card-1,
+.hero-card-2 {
+  width: clamp(200px, 22vw, 280px);
+  border-radius: 12px;
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,.25));
+  position: relative;
+}
+
+/* Первая карта сверху */
+.hero-card-1 {
+  transform: rotate(-6deg);
+  z-index: 3;
+}
+
+/* Вторая карта выглядывает из-за первой */
+.hero-card-2 {
+  margin-left: -60px; /* нахлёст */
+  transform: rotate(-12deg);
+  z-index: 2;
+}
+
+
+@media (max-width:900px){
+    /* Увеличиваем высоту hero */
+  .hero-strip {
+    height: 250px; /* можно увеличить при необходимости */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 10px;
+    margin-bottom: 50px;
+  }
+
+  /* Прячем деньги (если хочешь оставить, убери) */
+  .hero-money {
+    display: none;
+  }
+
+  /* Текст */
+  .hero-copy {
+    order: 1; /* текст будет первым */
+  }
+
+  /* Карты идут под текстом */
+  .hero-cards {
+    order: 2; /* карты будут после текста */
+    position: static;
+    margin-top: 16px; /* небольшой отступ от текста */
+    display: flex;
+    gap: 1px;
+    margin-left: -20px;
+    transform: scale(0.8);
+  }
+
+  .hero-card-1,
+  .hero-card-2 {
+    transform: rotate(0deg) !important; /* убираем наклон */
+    margin-left: 0 !important;
+  }
+}
