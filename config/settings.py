@@ -25,9 +25,12 @@ INSTALLED_APPS = [
 ]
 
 DOMAINS_ALLOWED = [
-    "заимыонлаин.рф",
-    "займырф.online",
-    "займлегко.рф",
+    "localhost", "127.0.0.1",
+    "xn--80aatfbqgidf6l.xn--p1ai",  # заимыонлаин.рф
+    "xn--80anhmuy1c.online",        # займырф.online (пример)
+    "xn--80agfgliehw.xn--p1ai",     # займлегко.рф (пример)
+    # при желании — и юникод-формы:
+    "заимыонлаин.рф", "займырф.online", "займлегко.рф",
 ]
 
 MIDDLEWARE = [
@@ -102,3 +105,22 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}

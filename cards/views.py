@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import Card, Showcase
 from .forms import CardForm, ShowcaseForm
+from django.views.decorators.http import require_POST
+
 
 def _get_showcase_by_key(key: str) -> Showcase:
     s = str(key).strip()
@@ -33,7 +35,7 @@ def showcases_admin(request):
     qs = Showcase.objects.order_by("-created_at", "-id")
     page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
     for sc in page_obj.object_list:
-        sc._domains_list = [x.strip() for x in (sc.domains or "").split(",") if x.strip()]
+        sc._domains_list = sc.domains_list()
     return render(request, "admin_showcases.html", {"page_obj": page_obj})
 
 @login_required
@@ -71,6 +73,7 @@ def card_edit(request, key, pk):
     return render(request, "admin_card_form.html", {"form": form, "showcase": showcase, "card": card})
 
 @login_required
+@require_POST
 def card_delete(request, key, pk):
     showcase = _get_showcase_by_key(key)
     card = get_object_or_404(Card, pk=pk, showcase=showcase)
@@ -78,6 +81,7 @@ def card_delete(request, key, pk):
     return redirect("cards_admin", key=showcase.slug)
 
 @login_required
+@require_POST
 def card_toggle(request, key, pk):
     showcase = _get_showcase_by_key(key)
     card = get_object_or_404(Card, pk=pk, showcase=showcase)
@@ -109,6 +113,7 @@ def showcase_edit(request, key):
     return render(request, "admin_showcase_form.html", {"form": form, "showcase": showcase})
 
 @login_required
+@require_POST
 def showcase_delete(request, key):
     showcase = _get_showcase_by_key(key)
     showcase.delete()
