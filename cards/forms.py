@@ -10,7 +10,7 @@ import re
 def build_domain_choices():
     """
     Берём домены из settings.DOMAINS_ALLOWED и превращаем в choices.
-    value — punycode (ascii), label — «красивый» (unicode).
+    value — punycode (ascii), label — красивый (unicode).
     """
     raw = getattr(settings, "DOMAINS_ALLOWED", []) or []
     choices = []
@@ -23,7 +23,7 @@ def build_domain_choices():
         d = (d or "").strip()
         if not d:
             continue
-        # ❌ пропускаем localhost и IP-адреса
+        # убираем localhost и ip
         if d in ("localhost", "127.0.0.1"):
             continue
         if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", d):
@@ -33,16 +33,20 @@ def build_domain_choices():
         label = d
         if idna:
             try:
+                # если это unicode — превратим в punycode
                 ascii_host = idna.encode(d, uts46=True).decode("ascii")
             except Exception:
                 ascii_host = d
             try:
+                # если это punycode — превратим обратно для отображения
                 label = idna.decode(ascii_host)
             except Exception:
                 label = d
 
         choices.append((ascii_host, label))
+
     return choices
+
 
 
 def normalize_domain_lines(value: str) -> str:
