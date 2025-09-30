@@ -1,0 +1,8 @@
+<li style="list-style:none; margin:6px 0; padding:8px 12px; border:1px solid #e5e7eb;
+           border-radius:8px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+  <label style="cursor:pointer; flex:1;">
+    <input type="checkbox" name="{{ widget.name }}" value="{{ widget.value|stringformat:'s' }}"
+           {% if widget.attrs.checked %}checked{% endif %}>
+    <span style="font-weight:500">{{ widget.label }}</span>
+  </label>
+</li>

@@ -4,13 +4,13 @@ from pathlib import Path
 from django import forms
 from django.conf import settings
 from .models import Showcase, Card
-
+import re
 # ---------------- utils ----------------
 
 def build_domain_choices():
     """
     Берём домены из settings.DOMAINS_ALLOWED и превращаем в choices.
-    value — punycode (если idna установлен), label — как в настройках.
+    value — punycode (ascii), label — «красивый» (unicode).
     """
     raw = getattr(settings, "DOMAINS_ALLOWED", []) or []
     choices = []
@@ -23,15 +23,27 @@ def build_domain_choices():
         d = (d or "").strip()
         if not d:
             continue
+        # ❌ пропускаем localhost и IP-адреса
+        if d in ("localhost", "127.0.0.1"):
+            continue
+        if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", d):
+            continue
+
+        ascii_host = d
+        label = d
         if idna:
             try:
                 ascii_host = idna.encode(d, uts46=True).decode("ascii")
             except Exception:
                 ascii_host = d
-        else:
-            ascii_host = d
-        choices.append((ascii_host, d))
+            try:
+                label = idna.decode(ascii_host)
+            except Exception:
+                label = d
+
+        choices.append((ascii_host, label))
     return choices
+
 
 def normalize_domain_lines(value: str) -> str:
     lines = []
@@ -53,6 +65,10 @@ def get_theme_choices():
     return [("", "Авто (общий шаблон)")] + items
 
 # ---------------- forms ----------------
+
+class DomainCheckboxSelect(forms.CheckboxSelectMultiple):
+    template_name = "widgets/domain_checkbox.html"
+    option_template_name = "widgets/domain_checkbox_option.html"
 
 class ShowcaseForm(forms.ModelForm):
     # шаблон — выпадающий список
@@ -79,6 +95,7 @@ class ShowcaseForm(forms.ModelForm):
         if choices:
             self.fields["domains"].choices = choices
             self.fields["domains"].help_text = "Выберите один или несколько доменов."
+            self.fields["domains"].widget = DomainCheckboxSelect()
             # проставим initial из instance.domains (там храним по строкам)
             if self.instance and self.instance.pk and self.instance.domains:
                 current = [ln.strip() for ln in self.instance.domains.splitlines() if ln.strip()]

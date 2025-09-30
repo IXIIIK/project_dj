@@ -1,0 +1,7 @@
+<ul style="padding:0; margin:0;">
+  {% for group, options, index in widget.optgroups %}
+    {% for option in options %}
+      {{ option.template_name|default:widget.option_template_name|safe }}
+    {% endfor %}
+  {% endfor %}
+</ul>
