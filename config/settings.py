@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS","*").split(",")
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if x.strip()]
@@ -10,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-not-secret")
 
+load_dotenv(BASE_DIR / ".env")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -18,7 +20,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "cards",
+]
+
+DOMAINS_ALLOWED = [
+    "заимыонлаин.рф",
+    "займырф.online",
+    "займлегко.рф",
 ]
 
 MIDDLEWARE = [
@@ -51,21 +60,39 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASS"),
-        "HOST": os.getenv("DB_HOST","db"),
-        "PORT": os.getenv("DB_PORT","5432"),
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite")
+
+if DB_ENGINE == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASS"),
+            "HOST": os.getenv("DB_HOST","db"),
+            "PORT": os.getenv("DB_PORT","5432"),
+        }
     }
-}
+
+else:  # SQLite по умолчанию
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 LANGUAGE_CODE = "ru"
 TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_TZ = True
+
+
+# STATIC_URL = "/static/"
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
+
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static_root"          # куда collectstatic кладёт

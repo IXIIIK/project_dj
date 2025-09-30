@@ -1,0 +1,102 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Займы онлайн</title>
+  <link rel="stylesheet" href="{% static 'themes/blue/style.css' %}">
+</head>
+<body>
+
+  <!-- белая шапка, логотип слева, ровно по краю сетки -->
+  <header class="site-header">
+    <div class="container header__row header__row--left">
+      <a class="site-logo" href="/">
+        <span class="logo-text">
+          <span class="logo-text__black">ЗАЙМЫ</span>
+          <span class="logo-text__green">ОНЛАЙН</span>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- чёрная полоса с лид-текстом -->
+  <section class="promo-bar">
+    <div class="container promo__inner">
+      <p class="promo__title">Мы подберём займ для Вас!</p>
+      <p class="promo__subtitle">БЫСТРО оформить заявку даже с плохой кредитной историей.</p>
+    </div>
+  </section>
+
+  <!-- сетка карточек -->
+  <main class="wrap">
+    <section class="grid">
+      {% for c in cards %}
+      <article class="card">
+        <!-- бренд на всю ширину -->
+        <div class="card__brand">
+          {% if c.logo %}
+            <img class="card__logo" src="{{ c.logo.url }}" alt="{{ c.title }}">
+          {% else %}
+            <span class="card__brand-text">{{ c.title }}</span>
+          {% endif %}
+        </div>
+
+        <!-- длинная чёрная линия почти на всю ширину -->
+        <div class="card__divider"></div>
+
+        <!-- ниже: слева условия (2 строки, с отступом), справа сумма -->
+        <div class="card__content">
+          <div class="card__meta card__meta--stack">
+            <div class="card__note">{{ c.rate_line|default:"0% / день" }}</div>
+            <div class="card__note">{{ c.age_line|default:"от 18 лет" }}</div>
+          </div>
+          <div class="card__amount">{{ c.price|default:"100000" }} ₽</div>
+        </div>
+
+        <a class="card__btn"
+            href="{{ c.btn_url|default:'#' }}"
+            {% if c.btn_url %}target="_blank" rel="noopener"{% endif %}>
+            {{ c.btn_text|default:"Получить деньги" }}
+        </a>
+        {% if c.fine_print %}
+          <div class="fine-print">{{ c.fine_print }}</div>
+        {% endif %}
+      </article>
+      {% empty %}
+      <article class="card"><div style="text-align:center">Нет карточек. Зайдите в <a href="/admin/">админку</a> и добавьте.</div></article>
+      {% endfor %}
+    </section>
+  </main>
+
+  <!-- блок «наши выгоды» -->
+  <section class="benefits">
+    <div class="container">
+      <h2 class="benefits__title">Наши выгоды</h2>
+      <ul class="benefits__list">
+        <li>Актуальные условия микрофинансовых компаний</li>
+        <li>Займы без отказа</li>
+        <li>Помогаем получать займы срочно</li>
+        <li>Знаем, какие дают займы круглосуточно</li>
+        <li>Займ на карту онлайн за пару кликов</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- тёмный подвал -->
+  <footer class="bottom-bar">
+    <div class="container">
+      <p class="bottom-bar__links">
+        <a href="#" rel="nofollow">Правила конфиденциальности</a>
+        <span class="sep">·</span>
+        <a href="#" rel="nofollow">Соглашение</a>
+      </p>
+      <p class="bottom-bar__text">
+        Сайт не является представительством МФО или банка, не выдаёт займы и кредиты. Вы рекомендуемые на сайте кредитные учреждения имеют соответствующие лицензии. Условия нужно уточнять на сайте МФО. Используя сайт, вы принимаете условия соглашения.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

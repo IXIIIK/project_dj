@@ -21,49 +21,86 @@
   </style>
 </head>
 <body>
+
+  <style>
+    .table .actions { white-space: nowrap; }
+    .table .actions .btn-link { margin-right: 12px; }
+    .table .links div { line-height: 1.3; }
+    /* на всякий случай сброс странных глобальных правил */
+    .table td a { position: static; float: none; display: inline; }
+  </style>
+
 <div class="wrap">
   <div class="crumbs">
-    <a href="{% url 'showcases_admin' %}">← К витринам</a>
+    <a href="{% url 'showcases_admin' %}">← Витрины</a>
   </div>
 
   <div class="top-actions">
     <h2>Карточки — {{ showcase.name }}</h2>
-    <a class="btn" href="{% url 'card_add' showcase.id %}">Добавить карточку</a>
+    <a class="btn" href="{% url 'card_add' showcase.slug %}">+ Добавить карточку</a>
   </div>
 
   <table class="table">
     <thead>
       <tr>
-        <th>№</th>
-        <th>Позиция</th>
-        <th>Лого</th>
-        <th>Цена</th>
-        <th>Ссылка кнопки</th>
+        <th>#</th>
+        <th>Название</th>
+        <th>Домен(ы)</th>
+        <th>Тема</th>
+        <th>Ссылки</th>
         <th>Действия</th>
-        <th>Видимость</th>
       </tr>
     </thead>
     <tbody>
-      {% for c in page_obj.object_list %}
-      <tr>
-        <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
-        <td>{{ c.order_index }}</td>
-        <td>{% if c.logo %}<img src="{{ c.logo.url }}" style="height:36px" alt="{{ c.title }}">{% endif %}</td>
-        <td>{{ c.price }} ₽</td>
-        <td>{% if c.btn_url %}<a href="{{ c.btn_url }}" target="_blank" rel="noopener">перейти</a>{% else %}—{% endif %}</td>
-        <td class="actions">
-          <a href="{% url 'card_edit' showcase.id c.id %}">Редактировать</a>
-          <a href="{% url 'card_delete' showcase.id c.id %}" onclick="return confirm('Удалить карточку?')">Удалить</a>
-        </td>
-        <td>
-          <a href="{% url 'card_toggle' showcase.id c.id %}">{% if c.active %} 👁️ {% else %} 🚫 {% endif %}</a>
-        </td>
-      </tr>
+      {% for sc in page_obj.object_list %}
+        <tr>
+          <td>{{ sc.id }}</td>
+          <td>{{ sc.name }}</td>
+  
+          <td>
+            {% with sc.domains_list as hosts %}
+              {% if hosts %}{{ hosts|join:", " }}{% else %}&mdash;{% endif %}
+            {% endwith %}
+          </td>
+  
+          <td>{{ sc.template|default:"—" }}</td>
+  
+          <td class="links">
+            {% with sc.domains_list as hosts %}
+              {% if hosts %}
+                {% for host in hosts %}
+                  <div>
+                    <a href="http://{{ host }}{% if sc.slug %}/{{ sc.slug }}{% else %}/{{ sc.id }}{% endif %}/" target="_blank">
+                      {{ host }}{% if sc.slug %}/{{ sc.slug }}{% else %}/{{ sc.id }}{% endif %}/
+                    </a>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div>
+                  <a href="/{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/" target="_blank">
+                    /{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/
+                  </a>
+                </div>
+              {% endif %}
+            {% endwith %}
+          </td>
+  
+          <td class="actions">
+            <a class="btn-sm" href="{% url 'cards_admin' sc.id %}">Карточки</a>
+            <a class="btn-sm" href="{% url 'showcase_edit' sc.id %}">Редактировать</a>
+            <a class="btn-sm danger"
+               href="{% url 'showcase_delete' sc.id %}"
+               onclick="return confirm('Удалить витрину «{{ sc.name }}»?')">
+              Удалить
+            </a>
+          </td>
+        </tr>
       {% empty %}
-      <tr><td colspan="7">Пока пусто. Нажмите «Добавить карточку».</td></tr>
+        <tr><td colspan="6">Витрин пока нет.</td></tr>
       {% endfor %}
     </tbody>
   </table>
+  
 
   {% if page_obj.paginator.num_pages > 1 %}
   <div class="pager">

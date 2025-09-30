@@ -1,4 +1,4 @@
-#!/Users/ilyusha/Desktop/spodruchno_dj/.venv/bin/python3.11
+#!/Users/ilyusha/Desktop/project_dj/.venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

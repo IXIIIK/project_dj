@@ -1,62 +1,131 @@
-<!doctype html><html lang="ru"><head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Витрины — Админка</title>
-    <link rel="stylesheet" href="/static/style.css?v=17">
-    <style>
-    .wrap{max-width:980px;margin:24px auto;padding:0 18px}
-    .table{width:100%;border-collapse:collapse;background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
-    .table th,.table td{padding:12px 14px;border-bottom:1px solid #eef1f6;font-size:14px;vertical-align:middle}
-    .table th{background:#f9fbff;text-align:left;color:#4a5568}
-    .top-actions{display:flex;justify-content:space-between;align-items:center;margin:0 0 16px}
-    .btn{padding:6px 12px;border-radius:6px;background:#5A7BFF;color:#fff;text-decoration:none}
-    .pager{display:flex;gap:8px;justify-content:center;margin:16px 0}
-    .pager a,.pager span{padding:6px 10px;border-radius:6px;background:#f1f5f9;text-decoration:none}
-    .pager .current{background:#5A7BFF;color:#fff}
-    </style></head><body>
-    <div class="wrap">
-      <div class="top-actions">
-        <h2>Витрины</h2>
-        <div>
-          <a class="btn" href="{% url 'showcase_add' %}">Добавить витрину</a>
-        </div>
-      </div>
-      
-      <table class="table">
-        <thead>
-          <tr><th>#</th><th>Название</th><th>Домен(ы)</th><th>Ссылки</th><th>Действия</th></tr>
-        </thead>
-        <tbody>
-          {% for sc in page_obj.object_list %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Витрины</title>
+  <link rel="stylesheet" href="/static/style.css?v=18">
+  <style>
+    :root{
+      --ink:#0f172a; --muted:#64748b; --bg:#f6f8fc; --white:#fff;
+      --line:#eef2f7; --brand:#5A7BFF; --brand2:#3358ff;
+      --shadow: 0 10px 25px rgba(16,24,40,.06);
+      --radius:16px;
+    }
+    body{background:var(--bg); color:var(--ink); font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+    .wrap{max-width:980px;margin:28px auto;padding:0 18px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 16px}
+    h2{margin:0;font-size:20px}
+
+    /* кнопки */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;
+         background:var(--brand);color:#fff;text-decoration:none}
+    .btn:hover{background:var(--brand2)}
+    .btn-sm{display:inline-flex;align-items:center;padding:6px 10px;border-radius:8px;
+            background:#eef2ff;color:#1d4ed8;text-decoration:none;font-weight:600}
+    .btn-sm:hover{background:#e0e7ff}
+    .btn-sm.danger{background:#fee2e2;color:#991b1b}
+    .btn-sm.danger:hover{background:#fecaca}
+
+    /* таблица */
+    .table{width:100%;border-collapse:collapse;background:var(--white);
+           border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .table th,.table td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+    .table th{background:#f9fbff;text-align:left;color:#42526b;font-weight:600}
+    .table tr:last-child td{border-bottom:none}
+    .num{color:var(--muted);width:56px}
+    .domains{color:#0f172a}
+    .muted{color:var(--muted)}
+    .links a{display:block;color:#2563eb;text-decoration:none;line-height:1.35}
+    .actions{white-space:nowrap}
+    .actions .btn-sm{margin-right:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h2>Витрины</h2>
+      <a class="btn" href="{% url 'showcase_add' %}">+ Добавить витрину</a>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Название</th>
+          <th>Домен(ы)</th>
+          <th>Тема</th>
+          <th>Ссылки</th>
+          <th class="actions">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sc in page_obj.object_list %}
           <tr>
-            <td>{{ sc.id }}</td>
+            <td class="num">{{ sc.id }}</td>
             <td>{{ sc.name }}</td>
-            <td>{{ sc.domains|default:"—" }}</td>
-            <td>
-              <a href="/{{ sc.id }}/" target="_blank" rel="noopener">/{{ sc.id }}/</a>
+
+            <td class="domains">
+              {% with sc.domains_pairs as pairs %}
+                {% if pairs %}
+                  {% for host,label in pairs %}
+                    <span>{{ label }}</span>{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                {% else %}&mdash;{% endif %}
+              {% endwith %}
             </td>
-            <td>
-              <a href="{% url 'cards_admin' sc.id %}">Карточки</a>
-              <a href="{% url 'showcase_edit' sc.id %}">Редактировать</a>
-              <a href="{% url 'showcase_delete' sc.id %}" onclick="return confirm('Удалить витрину?')">Удалить</a>
+            <td>{{ sc.template|default:"—" }}</td>
+
+            <td class="links">
+              {% with sc.domains_pairs as pairs %}
+                {% if pairs %}
+                  {% for host,label in pairs %}
+                    <div>
+                      <a href="http://{{ host }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}" target="_blank" rel="noopener">
+                        {{ label }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}
+                      </a>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div>
+                    <a href="/{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/" target="_blank" rel="noopener">
+                      /{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/
+                    </a>
+                  </div>
+                {% endif %}
+              {% endwith %}
+            </td>
+            
+
+            <td class="actions">
+              <a class="btn-sm" href="{% url 'cards_admin' sc.id %}">Карточки</a>
+              <a class="btn-sm" href="{% url 'showcase_edit' sc.id %}">Редактировать</a>
+              <a class="btn-sm danger"
+                 href="{% url 'showcase_delete' sc.id %}"
+                 onclick="return confirm('Удалить витрину «{{ sc.name }}»?')">
+                 Удалить
+              </a>
             </td>
           </tr>
-          {% empty %}
-          <tr><td colspan="5">Пока нет витрин. Нажми «Добавить витрину».</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    
-      {% if page_obj.paginator.num_pages > 1 %}
-      <div class="pager">
+        {% empty %}
+          <tr><td colspan="6" class="muted">Витрин пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <div class="pager" style="display:flex;gap:8px;justify-content:center;margin:16px 0">
         {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+          <a class="btn-sm" href="?page={{ page_obj.previous_page_number }}">← Назад</a>
         {% endif %}
-        <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        <span class="btn-sm muted" style="pointer-events:none">
+          {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+          <a class="btn-sm" href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
         {% endif %}
       </div>
-      {% endif %}
-    </div>
-    </body></html>
-    
+    {% endif %}
+  </div>
+</body>
+</html>

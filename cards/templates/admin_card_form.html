@@ -19,7 +19,7 @@
   <div class="wrap">
     <div class="crumbs" style="margin:0 0 12px">
       <a href="{% url 'showcases_admin' %}">← К витринам</a> ·
-      {% if showcase %}<a href="{% url 'cards_admin' showcase.id %}">Карточки — {{ showcase.name }}</a>{% endif %}
+      <a href="{% url 'cards_admin' showcase.slug %}">Карточки — {{ showcase.name }}</a>
     </div>
 
     <h2>{% if card %}Редактировать{% else %}Добавить{% endif %} карточку</h2>

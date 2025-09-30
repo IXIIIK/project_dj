@@ -1,10 +1,123 @@
+# cards/forms.py
+import re
+from pathlib import Path
 from django import forms
-from .models import Card, Showcase
+from django.conf import settings
+from .models import Showcase, Card
+
+# ---------------- utils ----------------
+
+def build_domain_choices():
+    """
+    Берём домены из settings.DOMAINS_ALLOWED и превращаем в choices.
+    value — punycode (если idna установлен), label — как в настройках.
+    """
+    raw = getattr(settings, "DOMAINS_ALLOWED", []) or []
+    choices = []
+    try:
+        import idna
+    except Exception:
+        idna = None
+
+    for d in raw:
+        d = (d or "").strip()
+        if not d:
+            continue
+        if idna:
+            try:
+                ascii_host = idna.encode(d, uts46=True).decode("ascii")
+            except Exception:
+                ascii_host = d
+        else:
+            ascii_host = d
+        choices.append((ascii_host, d))
+    return choices
+
+def normalize_domain_lines(value: str) -> str:
+    lines = []
+    for line in (value or "").splitlines():
+        line = line.strip()
+        if line:
+            lines.append(line)
+    return "\n".join(sorted(set(lines)))
+
+def get_theme_choices():
+    base = Path(settings.BASE_DIR) / "cards" / "templates" / "themes"
+    label_map = {"green": "Зелёный", "blue": "Синий"}
+    items = []
+    if base.exists():
+        for d in sorted(base.iterdir()):
+            if d.is_dir() and not d.name.startswith("_"):
+                label = label_map.get(d.name, d.name)
+                items.append((d.name, label))
+    return [("", "Авто (общий шаблон)")] + items
+
+# ---------------- forms ----------------
 
 class ShowcaseForm(forms.ModelForm):
+    # шаблон — выпадающий список
+    template = forms.ChoiceField(choices=(), required=False)
+    # домены — по умолчанию как чекбоксы (если список есть)
+    domains = forms.MultipleChoiceField(required=False, choices=[], widget=forms.CheckboxSelectMultiple)
+
     class Meta:
         model = Showcase
-        fields = ["name", "slug", "domains"]
+        fields = ["name", "template", "slug", "domains"]
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Название"}),
+            "slug": forms.TextInput(attrs={"placeholder": "URL-имя (после /)"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # choices для тем
+        self.fields["template"].choices = get_theme_choices()
+
+        # домены из settings
+        choices = build_domain_choices()
+        if choices:
+            self.fields["domains"].choices = choices
+            self.fields["domains"].help_text = "Выберите один или несколько доменов."
+            # проставим initial из instance.domains (там храним по строкам)
+            if self.instance and self.instance.pk and self.instance.domains:
+                current = [ln.strip() for ln in self.instance.domains.splitlines() if ln.strip()]
+                self.initial["domains"] = current
+        else:
+            # если DOMAINS_ALLOWED пуст — даём textarea
+            self.fields["domains"] = forms.CharField(
+                required=False,
+                widget=forms.Textarea(attrs={"rows": 6, "placeholder": "Список пуст. Добавьте домены в settings.DOMAINS_ALLOWED."}),
+                help_text="Каждый домен с новой строки."
+            )
+
+        # подписи
+        self.fields["template"].label = "Тема"
+        self.fields["slug"].label = "URL-имя (после /)"
+        self.fields["domains"].label = "Домены"
+
+    def clean_slug(self):
+        """Нормализуем slug и при пустом — генерируем из name."""
+        slug = (self.cleaned_data.get("slug") or "").strip().lower()
+        if not slug:
+            base = (self.cleaned_data.get("name") or "").strip().lower()
+            base = re.sub(r"[^a-z0-9-_]+", "-", base).strip("-_")
+            return base
+        return re.sub(r"[^a-z0-9-_]+", "-", slug).strip("-_")
+
+    def save(self, commit=True):
+        sc = super().save(commit=False)
+
+        # checkbox/textarea — сохраняем единообразно: по строкам
+        if isinstance(self.fields["domains"], forms.MultipleChoiceField):
+            selected = self.cleaned_data.get("domains") or []
+            sc.domains = "\n".join(sorted(set([s.strip() for s in selected if s.strip()])))
+        else:
+            sc.domains = normalize_domain_lines(self.cleaned_data.get("domains") or "")
+
+        if commit:
+            sc.save()
+        return sc
 
 
 class CardForm(forms.ModelForm):
@@ -21,4 +134,3 @@ class CardForm(forms.ModelForm):
         if showcase is not None:
             self.fields["showcase"].initial = showcase
             self.fields["showcase"].widget = forms.HiddenInput()
-

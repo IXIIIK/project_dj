@@ -14,8 +14,20 @@
       <form method="post">
         {% csrf_token %}
         <div><label for="id_name">Название</label>{{ form.name }}</div>
-        <div><label for="id_slug">Slug</label>{{ form.slug }}</div>
-        <div><label for="id_domains">Домен(ы)</label>{{ form.domains }}</div>
+        <div><label for="id_template">Тема</label>{{ form.template }}</div>
+        <div class="field">
+          <label for="id_slug">URL-имя (после /)</label>
+          {{ form.slug }}
+          <div class="help">Можно оставить пустым — сгенерируется из названия. Только латиница, цифры и «-».</div>
+        </div>
+        <div class="form-row">
+          <label for="{{ form.domains.id_for_label }}">Домены</label>
+          {{ form.domains }}
+          {% if form.domains.help_text %}
+            <div class="help">{{ form.domains.help_text }}</div>
+          {% endif %}
+          {% for err in form.domains.errors %}<div class="error">{{ err }}</div>{% endfor %}
+        </div>
         <button type="submit" class="btn">Сохранить</button>
       </form>
       <p><a href="{% url 'showcases_admin' %}">← Назад к витринам</a></p>
