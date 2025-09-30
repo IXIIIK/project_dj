@@ -49,15 +49,16 @@ def cards_admin(request, key):
 def card_add(request, key):
     showcase = _get_showcase_by_key(key)
     if request.method == "POST":
-        form = ShowcaseForm(request.POST)
+        form = CardForm(request.POST, request.FILES, showcase=showcase)   # ← CardForm
         if form.is_valid():
             card = form.save(commit=False)
             card.showcase = showcase
             card.save()
             return redirect("cards_admin", key=showcase.slug)
     else:
-        form = CardForm(showcase=showcase)
+        form = CardForm(showcase=showcase)   # ← тоже CardForm
     return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
+
 
 @login_required
 def card_edit(request, key, pk):
