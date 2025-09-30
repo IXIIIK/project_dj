@@ -49,7 +49,7 @@ def cards_admin(request, key):
 def card_add(request, key):
     showcase = _get_showcase_by_key(key)
     if request.method == "POST":
-        form = CardForm(request.POST, request.FILES, showcase=showcase)
+        form = ShowcaseForm(request.POST)
         if form.is_valid():
             card = form.save(commit=False)
             card.showcase = showcase
