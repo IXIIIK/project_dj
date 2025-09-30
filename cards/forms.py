@@ -102,6 +102,7 @@ class ShowcaseForm(forms.ModelForm):
         if choices:
             self.fields["domains"].choices = choices
             self.fields["domains"].help_text = "Выберите один или несколько доменов."
+            # ВРЕМЕННО: дефолтный виджет от Django
             self.fields["domains"].widget = DomainCheckboxSelect()
             # проставим initial из instance.domains
             if self.instance and self.instance.pk and self.instance.domains:

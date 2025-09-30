@@ -46,18 +46,19 @@ def cards_admin(request, key):
     return render(request, "admin_cards.html", {"showcase": showcase, "page_obj": page_obj})
 
 @login_required
-def card_add(request, key):
-    showcase = _get_showcase_by_key(key)
+def showcase_add(request):
     if request.method == "POST":
-        form = CardForm(request.POST, request.FILES, showcase=showcase)   # ← CardForm
+        form = ShowcaseForm(request.POST)
         if form.is_valid():
-            card = form.save(commit=False)
-            card.showcase = showcase
-            card.save()
-            return redirect("cards_admin", key=showcase.slug)
+            form.save()
+            return redirect("showcases_admin")
     else:
-        form = CardForm(showcase=showcase)   # ← тоже CardForm
-    return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
+        form = ShowcaseForm()
+    return render(
+        request,
+        "admin_showcase_form.html",
+        {"form": form, "dom_choices_dbg": build_domain_choices()},
+    )
 
 
 @login_required
@@ -111,7 +112,11 @@ def showcase_edit(request, key):
             return redirect("showcases_admin")
     else:
         form = ShowcaseForm(instance=showcase)
-    return render(request, "admin_showcase_form.html", {"form": form, "showcase": showcase})
+    return render(
+        request,
+        "admin_showcase_form.html",
+        {"form": form, "showcase": showcase, "dom_choices_dbg": build_domain_choices()},
+    )
 
 @login_required
 @require_POST

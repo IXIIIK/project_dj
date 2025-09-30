@@ -41,7 +41,7 @@
 <body>
 <div class="wrap">
   <h2>{% if showcase %}Редактировать витрину{% else %}Новая витрина{% endif %}</h2>
-
+  <p style="color:#64748b">DEBUG choices: {{ dom_choices_dbg }}</p>
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -67,9 +67,7 @@
 
     <div class="form-row">
       {{ form.domains.label_tag }}
-      <ul class="domains-list">
-        {{ form.domains }}
-      </ul>
+      {{ form.domains }}
       <div class="help">{{ form.domains.help_text }}</div>
       {{ form.domains.errors }}
     </div>
