@@ -73,7 +73,7 @@
             </form>
 
             <form method="post" action="{% url 'card_delete' showcase.slug c.id %}" style="display:inline"
-                  onsubmit="return confirm('Удалить карточку «{{ c.title|default:\'без названия\'}}»?');">
+                  onsubmit="return confirm('Удалить карточку «{{ c.title|default:"без названия" }}»?');">
               {% csrf_token %}
               <button type="submit" class="btn-link danger">Удалить</button>
             </form>
