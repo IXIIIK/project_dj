@@ -3,6 +3,9 @@ version: "3.9"
 services:
   db:
     image: postgres:16-alpine
+    env_file: .env.prod
+    # Если хочешь, можно вовсе убрать этот блок environment.
+    # Либо оставить — он безопасен, если в .env.prod есть DB_*:
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -10,7 +13,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      # Читаем из ОКРУЖЕНИЯ КОНТЕЙНЕРА → $${...}
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 30
@@ -46,3 +50,4 @@ volumes:
   db_data:
   static_data:
   media_data:
+
