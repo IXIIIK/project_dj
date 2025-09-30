@@ -1,36 +1,83 @@
-<!doctype html><html lang="ru"><head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% if showcase %}Редактировать{% else %}Добавить{% endif %} витрину</title>
-    <link rel="stylesheet" href="/static/style.css?v=17">
-    <style>
-    .wrap{max-width:640px;margin:24px auto;padding:0 18px}
-    form{display:flex;flex-direction:column;gap:16px;background:#fff;padding:24px;border-radius:12px;box-shadow:var(--shadow)}
-    label{font-weight:600;margin-bottom:4px;display:block}
-    input,textarea{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%}
-    .btn{padding:10px 16px;border-radius:6px;background:#5A7BFF;color:#fff;text-decoration:none;border:none;cursor:pointer}
-    </style></head><body>
-    <div class="wrap">
-      <h2>{% if showcase %}Редактировать{% else %}Добавить{% endif %} витрину</h2>
-      <form method="post">
-        {% csrf_token %}
-        <div><label for="id_name">Название</label>{{ form.name }}</div>
-        <div><label for="id_template">Тема</label>{{ form.template }}</div>
-        <div class="field">
-          <label for="id_slug">URL-имя (после /)</label>
-          {{ form.slug }}
-          <div class="help">Можно оставить пустым — сгенерируется из названия. Только латиница, цифры и «-».</div>
-        </div>
-        <div class="form-row">
-          <label for="{{ form.domains.id_for_label }}">Домены</label>
-          {{ form.domains }}
-          {% if form.domains.help_text %}
-            <div class="help">{{ form.domains.help_text }}</div>
-          {% endif %}
-          {% for err in form.domains.errors %}<div class="error">{{ err }}</div>{% endfor %}
-        </div>
-        <button type="submit" class="btn">Сохранить</button>
-      </form>
-      <p><a href="{% url 'showcases_admin' %}">← Назад к витринам</a></p>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if showcase %}Редактировать витрину{% else %}Новая витрина{% endif %}</title>
+  <link rel="stylesheet" href="/static/style.css?v=19">
+  <style>
+    :root {
+      --ink:#0f172a; --muted:#64748b; --bg:#f6f8fc; --white:#fff;
+      --line:#eef2f7; --brand:#5A7BFF; --brand2:#3358ff;
+      --shadow:0 10px 25px rgba(16,24,40,.06);
+      --radius:16px;
+    }
+    body { background:var(--bg); color:var(--ink);
+           font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif }
+    .wrap { max-width:640px; margin:40px auto; padding:0 18px }
+    h2 { margin:0 0 20px; font-size:22px }
+    form { background:var(--white); border-radius:var(--radius);
+           box-shadow:var(--shadow); padding:28px }
+    .form-row { margin-bottom:18px }
+    .form-row label { display:block; margin-bottom:6px; font-weight:600; font-size:14px }
+    .form-row input[type=text],
+    .form-row select,
+    .form-row textarea {
+      width:100%; padding:10px 12px; border:1px solid var(--line);
+      border-radius:8px; font-size:14px;
+    }
+    .form-row .help { color:var(--muted); font-size:13px; margin-top:4px }
+    .domains-list { margin-top:8px }
+    .domains-list li { margin:6px 0; }
+    button[type=submit] {
+      display:block; width:100%; padding:12px;
+      background:var(--brand); color:#fff; font-weight:600;
+      border:none; border-radius:8px; cursor:pointer;
+    }
+    button[type=submit]:hover { background:var(--brand2) }
+    .backlink { display:inline-block; margin:20px 0 0; color:var(--brand); text-decoration:none }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h2>{% if showcase %}Редактировать витрину{% else %}Новая витрина{% endif %}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-row">
+      {{ form.name.label_tag }}
+      {{ form.name }}
+      {{ form.name.errors }}
     </div>
-    </body></html>
-    
+
+    <div class="form-row">
+      {{ form.template.label_tag }}
+      {{ form.template }}
+      {{ form.template.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.slug.label_tag }}
+      {{ form.slug }}
+      <div class="help">{{ form.slug.help_text }}</div>
+      {{ form.slug.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.domains.label_tag }}
+      <ul class="domains-list">
+        {{ form.domains }}
+      </ul>
+      <div class="help">{{ form.domains.help_text }}</div>
+      {{ form.domains.errors }}
+    </div>
+
+    <button type="submit">СОХРАНИТЬ</button>
+  </form>
+
+  <a href="{% url 'showcases_admin' %}" class="backlink">← Назад к витринам</a>
+</div>
+</body>
+</html>
