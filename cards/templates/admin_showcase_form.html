@@ -66,7 +66,16 @@
 
     <div class="form-row">
       {{ form.domains.label_tag }}
-      {{ form.domains }}
+
+      {# Явно рендерим каждую опцию — без завязки на шаблоны виджетов #}
+      <div class="domains-grid">
+        {% for opt in form.domains %}
+          <label class="dom-opt">
+            {{ opt.tag }} <span>{{ opt.choice_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+
       <div class="help">{{ form.domains.help_text }}</div>
       {{ form.domains.errors }}
     </div>
@@ -76,5 +85,20 @@
 
   <a href="{% url 'showcases_admin' %}" class="backlink">← Назад к витринам</a>
 </div>
+<style>
+  .domains-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;
+  }
+  .dom-opt{
+    display:flex; align-items:center; gap:8px;
+    padding:10px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;
+  }
+  /* жёстко включаем чекбоксы: вдруг где-то в style.css их спрятали */
+  .domains-grid input[type=checkbox]{
+    display:inline-block !important;
+    width:auto !important; height:auto !important; opacity:1 !important;
+    position:static !important; clip:auto !important; clip-path:none !important;
+  }
+</style>
 </body>
 </html>

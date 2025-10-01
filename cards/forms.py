@@ -14,42 +14,47 @@ class DomainCheckboxSelect(forms.CheckboxSelectMultiple):
 def build_domain_choices():
     """
     Берём домены из settings.DOMAINS_ALLOWED и превращаем в choices.
-    value — punycode (ascii), label — красивый (unicode).
+    - игнорируем localhost и IP
+    - для value всегда используем punycode (ascii)
+    - для label всегда показываем unicode
+    - dedupe по punycode, сортируем по label
     """
     raw = getattr(settings, "DOMAINS_ALLOWED", []) or []
-    choices = []
+    uniq = {}  # ascii_host -> label
+
     try:
         import idna
-    except Exception:
+    except ImportError:
         idna = None
 
     for d in raw:
-        d = (d or "").strip()
+        d = (d or "").strip().lower()
         if not d:
             continue
-        # ❌ пропускаем localhost и ip
+
+        # выкидываем локалки и IP
         if d in ("localhost", "127.0.0.1"):
             continue
         if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", d):
             continue
 
+        # нормализуем к punycode для value
         ascii_host = d
         label = d
         if idna:
             try:
-                # если это unicode → punycode
                 ascii_host = idna.encode(d, uts46=True).decode("ascii")
             except Exception:
                 ascii_host = d
             try:
-                # если это punycode → unicode
                 label = idna.decode(ascii_host)
             except Exception:
                 label = d
 
-        choices.append((ascii_host, label))
+        uniq[ascii_host] = label
 
-    return choices
+    # вернём отсортированные пары (punycode, unicode)
+    return sorted(uniq.items(), key=lambda kv: kv[1])
 
 
 def normalize_domain_lines(value: str) -> str:
@@ -95,25 +100,27 @@ class ShowcaseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # choices для тем
-        self.fields["template"].choices = get_theme_choices()
+        self.fields["domains"].widget = forms.CheckboxSelectMultiple()
 
         # домены из settings
+        print(">>> DEBUG DOMAINS_ALLOWED:", settings.DOMAINS_ALLOWED)
         choices = build_domain_choices()
+        print(">>> DEBUG build_domain_choices:", choices)
+
         if choices:
             self.fields["domains"].choices = choices
             self.fields["domains"].help_text = "Выберите один или несколько доменов."
-            # ВРЕМЕННО: дефолтный виджет от Django
-            self.fields["domains"].widget = DomainCheckboxSelect()
-            # проставим initial из instance.domains
+            # пересоздаём widget, чтобы он подтянул актуальные choices
+            self.fields["domains"].widget = forms.CheckboxSelectMultiple(choices=choices)
+
             if self.instance and self.instance.pk and self.instance.domains:
                 current = [ln.strip() for ln in self.instance.domains.splitlines() if ln.strip()]
                 self.initial["domains"] = current
         else:
-            # fallback — textarea, если список пуст
             self.fields["domains"] = forms.CharField(
                 required=False,
                 widget=forms.Textarea(attrs={"rows": 6,
-                                             "placeholder": "Список пуст. Добавьте домены в settings.DOMAINS_ALLOWED."}),
+                                            "placeholder": "Список пуст. Добавьте домены в settings.DOMAINS_ALLOWED."}),
                 help_text="Каждый домен с новой строки."
             )
 

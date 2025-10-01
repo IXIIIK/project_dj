@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.text import slugify
 import re
+import idna
 
 class Showcase(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название витрины")
@@ -14,7 +15,7 @@ class Showcase(models.Model):
         help_text="Только латиница, цифры, дефис. Пример: zaimy-moskva",
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    domains = models.TextField(blank=True, help_text="Домен(ы) через запятую")
+    domains = models.TextField(blank=True, default='')
     # 👇 новое поле
     template = models.CharField(
         max_length=50,
@@ -28,7 +29,16 @@ class Showcase(models.Model):
     
     def domains_list(self):
         """Список доменов из поля domains (через запятую/пробел/переносы)."""
-        return [h.strip() for h in re.split(r"[,\s]+", self.domains or "") if h.strip()]
+        out = []
+        for line in (self.domains or "").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                out.append(idna.decode(line))
+            except Exception:
+                out.append(line)
+        return out
     
     def domains_pairs(self):
         """

@@ -52,13 +52,12 @@ def showcase_detail(request, key):
 
     return render(request, templates, {"cards": cards, "showcase": showcase})
 
+
 # ---------- админка ----------
 @login_required
 def showcases_admin(request):
     qs = Showcase.objects.order_by("-created_at", "-id")
     page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
-    for sc in page_obj.object_list:
-        sc._domains_list = sc.domains_list()
     return render(request, "admin_showcases.html", {"page_obj": page_obj})
 
 @login_required

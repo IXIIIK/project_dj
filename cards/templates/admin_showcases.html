@@ -71,7 +71,9 @@
                   {% for host,label in pairs %}
                     <span>{{ label }}</span>{% if not forloop.last %}, {% endif %}
                   {% endfor %}
-                {% else %}&mdash;{% endif %}
+                {% else %}
+                  &mdash;
+                {% endif %}
               {% endwith %}
             </td>
             <td>{{ sc.template|default:"—" }}</td>
@@ -81,7 +83,8 @@
                 {% if pairs %}
                   {% for host,label in pairs %}
                     <div>
-                      <a href="http://{{ host }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}" target="_blank" rel="noopener">
+                      <a href="http://{{ host }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}"
+                        target="_blank" rel="noopener">
                         {{ label }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}
                       </a>
                     </div>
