@@ -7,6 +7,7 @@ urlpatterns = [
     path("add/", views.showcase_add, name="showcase_add"),
     path("<str:key>/edit/", views.showcase_edit, name="showcase_edit"),
     path("<str:key>/delete/", views.showcase_delete, name="showcase_delete"),
+    path("<str:key>/duplicate/", views.showcase_duplicate, name="showcase_duplicate"),
 
     # Карточки внутри витрины
     path("<str:key>/cards/", views.cards_admin, name="cards_admin"),

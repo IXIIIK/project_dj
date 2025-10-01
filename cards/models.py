@@ -8,7 +8,7 @@ class Showcase(models.Model):
     slug = models.SlugField(
         "URL-имя (после слеша)",
         max_length=64,
-        unique=True,
+        unique=False,
         blank=True,   # можно оставить пустым — сгенерируется автоматически
         null=True,
         help_text="Только латиница, цифры, дефис. Пример: zaimy-moskva",

@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS","*").split(",")
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if x.strip()]
-DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
+#DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
+DEBUG = 1
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

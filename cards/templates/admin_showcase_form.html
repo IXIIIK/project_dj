@@ -41,7 +41,6 @@
 <body>
 <div class="wrap">
   <h2>{% if showcase %}Редактировать витрину{% else %}Новая витрина{% endif %}</h2>
-  <p style="color:#64748b">DEBUG choices: {{ dom_choices_dbg }}</p>
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
