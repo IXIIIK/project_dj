@@ -10,24 +10,8 @@ from config import settings
 from django.shortcuts import get_object_or_404, redirect
 from .models import Showcase
 
-def _get_by_slug(slug: str):
-    return get_object_or_404(Showcase, slug=slug)
 
-def cards_admin_by_slug_redirect(request, slug):
-    sc = _get_by_slug(slug)
-    return redirect("cards_admin", pk=sc.pk)
 
-def showcase_edit_by_slug_redirect(request, slug):
-    sc = _get_by_slug(slug)
-    return redirect("showcase_edit", pk=sc.pk)
-
-def showcase_delete_by_slug_redirect(request, slug):
-    sc = _get_by_slug(slug)
-    return redirect("showcase_delete", pk=sc.pk)
-
-def showcase_duplicate_by_slug_redirect(request, slug):
-    sc = _get_by_slug(slug)
-    return redirect("showcase_duplicate", pk=sc.pk)
 
 def _get_showcase_by_key(request, key: str) -> Showcase:
     s = str(key).strip()
@@ -62,12 +46,8 @@ def index(request):
     return render(request, "index.html", {"cards": cards})
 
 
-def showcase_detail(request, key):
-    if key.isdigit():
-        showcase = get_object_or_404(Showcase, pk=int(key))
-    else:
-        showcase = get_object_or_404(Showcase, slug=key)
-
+def showcase_detail(request, slug):
+    showcase = get_object_or_404(Showcase, slug=slug)
     cards = showcase.cards.filter(active=True).order_by("order_index", "id")
 
     templates = []
@@ -92,20 +72,6 @@ def cards_admin(request, pk):
     qs = showcase.cards.order_by("order_index", "id")
     page_obj = Paginator(qs, 20).get_page(request.GET.get("page"))
     return render(request, "admin_cards.html", {"showcase": showcase, "page_obj": page_obj})
-
-@login_required
-def card_add(request, pk):
-    showcase = get_object_or_404(Showcase, pk=pk)
-    if request.method == "POST":
-        form = CardForm(request.POST, request.FILES, showcase=showcase)
-        if form.is_valid():
-            card = form.save(commit=False)
-            card.showcase = showcase
-            card.save()
-            return redirect("cards_admin", pk=showcase.pk)
-    else:
-        form = CardForm(showcase=showcase)
-    return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
 
 
 
@@ -179,15 +145,6 @@ def card_delete(request, pk, cid):
     card = get_object_or_404(Card, pk=cid, showcase=showcase)
     card.delete()
     return redirect("cards_admin", pk=showcase.pk)
-
-@login_required
-@require_POST
-def card_toggle(request, key, pk):
-    showcase = _get_showcase_by_key(request, key)
-    card = get_object_or_404(Card, pk=pk, showcase=showcase)
-    card.active = not card.active
-    card.save()
-    return redirect("cards_admin", key=showcase.slug)
 
 
 @login_required
