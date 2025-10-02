@@ -134,15 +134,15 @@ def card_toggle(request, pk, cid):
 
 
 @login_required
-def card_add(request, key):
-    showcase = _get_showcase_by_key(request, key)
+def card_add(request, pk):
+    showcase = get_object_or_404(Showcase, pk=pk)
     if request.method == "POST":
         form = CardForm(request.POST, request.FILES, showcase=showcase)
         if form.is_valid():
             card = form.save(commit=False)
             card.showcase = showcase
             card.save()
-            return redirect("cards_admin", key=showcase.slug)
+            return redirect("cards_admin", pk=showcase.pk)
     else:
         form = CardForm(showcase=showcase)
     return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
