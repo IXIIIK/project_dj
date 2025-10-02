@@ -5,17 +5,8 @@ from dotenv import load_dotenv
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS","*").split(",")
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if x.strip()]
-DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
-
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Рекомендуется в проде:
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-# (опционально) перенаправлять все на https самим Django:
-# SECURE_SSL_REDIRECT = True
-
+#DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
+DEBUG = 1
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,13 +27,15 @@ INSTALLED_APPS = [
 
 DOMAINS_ALLOWED = [
     "localhost", "127.0.0.1",       
+    "xn--d1asbcbidu0b.xn--p1ai",    #сподручно.рф
     "xn--80aatfbqgidf6l.xn--p1ai",  # заимыонлаин.рф
     "xn--80anhmuy1c.online",        # займырф.online (пример)
     "xn--80agfgliehw.xn--p1ai",     # займлегко.рф (пример)
     # при желании — и юникод-формы:
+    "сподручно.рф"
     "заимыонлаин.рф",
     "займырф.online",
-      "займлегко.рф",
+    "займлегко.рф",
 ]
 
 MIDDLEWARE = [
