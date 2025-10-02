@@ -67,7 +67,7 @@ def normalize_domain_lines(value: str) -> str:
 
 
 def get_theme_choices():
-    base = Path(settings.BASE_DIR) / "cards" / "templates" / "themes"
+    base = Path(settings.BASE_DIR) / "cards" / "templates" / "themes" 
     label_map = {"green": "Зелёный", "blue": "Синий"}
     items = []
     if base.exists():
