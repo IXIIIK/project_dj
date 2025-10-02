@@ -84,23 +84,23 @@
                 {% if pairs %}
                   {% for host,label in pairs %}
                     <div>
-                      <a href="http://{{ host }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}"
-                        target="_blank" rel="noopener">
+                      <a href="http://{{ host }}/{% if sc.slug %}{{ sc.slug }}/{% else %}{{ sc.id }}/{% endif %}"
+                         target="_blank" rel="noopener">
                         {{ label }}{% if sc.slug %}/{{ sc.slug }}/{% else %}/{{ sc.id }}/{% endif %}
                       </a>
                     </div>
                   {% endfor %}
                 {% else %}
                   <div>
-                    <a href="/{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/" target="_blank" rel="noopener">
-                      /{% if sc.slug %}{{ sc.slug }}{% else %}{{ sc.id }}{% endif %}/
+                    <a href="/{% if sc.slug %}{{ sc.slug }}/{% else %}{{ sc.id }}/{% endif %}/"
+                       target="_blank" rel="noopener">
+                      /{% if sc.slug %}{{ sc.slug }}/{% else %}{{ sc.id }}/{% endif %}/
                     </a>
                   </div>
                 {% endif %}
               {% endwith %}
             </td>
             
-
             <td class="actions">
               <a class="btn-sm" href="{% url 'cards_admin' pk=sc.id %}">Карточки</a>
               <a class="btn-sm" href="{% url 'showcase_edit' pk=sc.id %}">Редактировать</a>
