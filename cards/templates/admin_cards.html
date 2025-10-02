@@ -38,7 +38,7 @@
 
   <div class="top-actions">
     <h2>Карточки — {{ showcase.name }}</h2>
-    <a class="btn" href="{% url 'card_add' pk=showcase.id cid=c.id %}">+ Добавить карточку</a>
+    <a class="btn" href="{% url 'card_add' pk=showcase.id %}">+ Добавить карточку</a>
   </div>
 
   <table class="table">
@@ -63,16 +63,16 @@
           </td>
           <td>{% if c.active %}Вкл{% else %}Выкл{% endif %}</td>
           <td class="actions">
-            <a class="btn-link" href="{% url 'card_edit' showcase.slug c.id %}">Редактировать</a>
+            <a class="btn-link" href="{% url 'card_edit' pk=showcase.id cid=c.id %}">Редактировать</a>
 
-            <form method="post" action="{% url 'card_toggle' showcase.slug c.id %}" style="display:inline">
+            <form method="post" action="{% url 'card_toggle' pk=showcase.id cid=c.id %}" style="display:inline">
               {% csrf_token %}
               <button type="submit" class="btn-link">
                 {% if c.active %}Отключить{% else %}Включить{% endif %}
               </button>
             </form>
 
-            <form method="post" action="{% url 'card_delete' showcase.slug c.id %}" style="display:inline"
+            <form method="post" action="{% url 'card_delete' pk=showcase.id cid=c.id %}" style="display:inline"
                   onsubmit="return confirm('Удалить карточку «{{ c.title|default:"без названия" }}»?');">
               {% csrf_token %}
               <button type="submit" class="btn-link danger">Удалить</button>
