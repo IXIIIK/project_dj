@@ -7,6 +7,27 @@ from django.views.decorators.http import require_POST
 from django.http import Http404
 from config import settings
 
+from django.shortcuts import get_object_or_404, redirect
+from .models import Showcase
+
+def _get_by_slug(slug: str):
+    return get_object_or_404(Showcase, slug=slug)
+
+def cards_admin_by_slug_redirect(request, slug):
+    sc = _get_by_slug(slug)
+    return redirect("cards_admin", pk=sc.pk)
+
+def showcase_edit_by_slug_redirect(request, slug):
+    sc = _get_by_slug(slug)
+    return redirect("showcase_edit", pk=sc.pk)
+
+def showcase_delete_by_slug_redirect(request, slug):
+    sc = _get_by_slug(slug)
+    return redirect("showcase_delete", pk=sc.pk)
+
+def showcase_duplicate_by_slug_redirect(request, slug):
+    sc = _get_by_slug(slug)
+    return redirect("showcase_duplicate", pk=sc.pk)
 
 def _get_showcase_by_key(request, key: str) -> Showcase:
     s = str(key).strip()

@@ -22,4 +22,9 @@ urlpatterns = [
     ,path("<int:pk>/cards/<int:cid>/edit/", views.card_edit, name="card_edit")
     ,path("<int:pk>/cards/<int:cid>/delete/", views.card_delete, name="card_delete")
     ,path("<int:pk>/cards/<int:cid>/toggle/", views.card_toggle, name="card_toggle")
+
+    ,path("<slug:slug>/cards/", views.cards_admin_by_slug_redirect),
+    path("<slug:slug>/edit/", views.showcase_edit_by_slug_redirect),
+    path("<slug:slug>/delete/", views.showcase_delete_by_slug_redirect),
+    path("<slug:slug>/duplicate/", views.showcase_duplicate_by_slug_redirect),
 ]
