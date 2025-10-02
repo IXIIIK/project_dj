@@ -61,58 +61,61 @@ def showcases_admin(request):
     return render(request, "admin_showcases.html", {"page_obj": page_obj})
 
 @login_required
-def cards_admin(request, key):
-    showcase = _get_showcase_by_key(request, key)
+def cards_admin(request, pk):
+    showcase = get_object_or_404(Showcase, pk=pk)
     qs = showcase.cards.order_by("order_index", "id")
     page_obj = Paginator(qs, 20).get_page(request.GET.get("page"))
     return render(request, "admin_cards.html", {"showcase": showcase, "page_obj": page_obj})
 
 @login_required
-def showcase_add(request):
+def card_add(request, pk):
+    showcase = get_object_or_404(Showcase, pk=pk)
     if request.method == "POST":
-        form = ShowcaseForm(request.POST)
+        form = CardForm(request.POST, request.FILES, showcase=showcase)
         if form.is_valid():
-            form.save()
-            return redirect("showcases_admin")
+            card = form.save(commit=False)
+            card.showcase = showcase
+            card.save()
+            return redirect("cards_admin", pk=showcase.pk)
     else:
-        form = ShowcaseForm()
-    return render(
-        request,
-        "admin_showcase_form.html",
-        {"form": form, "dom_choices_dbg": build_domain_choices()},
-    )
+        form = CardForm(showcase=showcase)
+    return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
+
 
 
 from django.db import transaction
 
-@login_required
-def showcase_duplicate(request, key):
-    original = _get_showcase_by_key(request, key)
 
-    # создаём копию витрины
-    new_showcase = Showcase.objects.get(pk=original.pk)
-    new_showcase.pk = None  # чтобы сохранился как новый
-    if new_showcase.slug:
-        base_slug = new_showcase.slug
-        # проверяем, нет ли дублей
-        counter = 1
-        new_slug = f"{base_slug}-copy"
-        while Showcase.objects.filter(slug=new_slug).exists():
-            counter += 1
-            new_slug = f"{base_slug}-copy{counter}"
-        new_showcase.slug = new_slug
-    new_showcase.save()
+@login_required
+@require_POST  # если делаешь кнопкой-формой; можно убрать, если хочешь GET
+def showcase_duplicate(request, pk):
+    src = get_object_or_404(Showcase, pk=pk)
+    # глубокое копирование + карточки
+    new = Showcase.objects.get(pk=src.pk)
+    new.pk = None
+    if new.slug:
+        new.slug = f"{new.slug}-copy"
+    new.save()
 
     # копируем карточки
-    for card in original.cards.all():
-        new_card = Card.objects.get(pk=card.pk)
-        new_card.pk = None  # новая запись
-        new_card.showcase = new_showcase  # привязываем к новой витрине
-        new_card.save()
-
+    cards = list(src.cards.all())
+    for c in cards:
+        old_id = c.pk
+        c.pk = None
+        c.showcase = new
+        c.save()
     return redirect("showcases_admin")
 
 
+
+@login_required
+@require_POST
+def card_toggle(request, pk, cid):
+    showcase = get_object_or_404(Showcase, pk=pk)
+    card = get_object_or_404(Card, pk=cid, showcase=showcase)
+    card.active = not card.active
+    card.save()
+    return redirect("cards_admin", pk=showcase.pk)
 
 
 @login_required
@@ -130,25 +133,26 @@ def card_add(request, key):
     return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
 
 @login_required
-def card_edit(request, key, pk):
-    showcase = _get_showcase_by_key(request, key)
-    card = get_object_or_404(Card, pk=pk, showcase=showcase)
+def card_edit(request, pk, cid):
+    showcase = get_object_or_404(Showcase, pk=pk)
+    card = get_object_or_404(Card, pk=cid, showcase=showcase)
     if request.method == "POST":
         form = CardForm(request.POST, request.FILES, instance=card, showcase=showcase)
         if form.is_valid():
             form.save()
-            return redirect("cards_admin", key=showcase.slug)
+            return redirect("cards_admin", pk=showcase.pk)
     else:
         form = CardForm(instance=card, showcase=showcase)
     return render(request, "admin_card_form.html", {"form": form, "showcase": showcase, "card": card})
 
+
 @login_required
 @require_POST
-def card_delete(request, key, pk):
-    showcase = _get_showcase_by_key(request, key)
-    card = get_object_or_404(Card, pk=pk, showcase=showcase)
+def card_delete(request, pk, cid):
+    showcase = get_object_or_404(Showcase, pk=pk)
+    card = get_object_or_404(Card, pk=cid, showcase=showcase)
     card.delete()
-    return redirect("cards_admin", key=showcase.slug)
+    return redirect("cards_admin", pk=showcase.pk)
 
 @login_required
 @require_POST
@@ -161,8 +165,8 @@ def card_toggle(request, key, pk):
 
 
 @login_required
-def showcase_edit(request, key):
-    showcase = _get_showcase_by_key(request, key)
+def showcase_edit(request, pk):
+    showcase = get_object_or_404(Showcase, pk=pk)
     if request.method == "POST":
         form = ShowcaseForm(request.POST, instance=showcase)
         if form.is_valid():
@@ -170,16 +174,13 @@ def showcase_edit(request, key):
             return redirect("showcases_admin")
     else:
         form = ShowcaseForm(instance=showcase)
-    return render(
-        request,
-        "admin_showcase_form.html",
-        {"form": form, "showcase": showcase, "dom_choices_dbg": build_domain_choices()},
-    )
+    return render(request, "admin_showcase_form.html", {"form": form, "showcase": showcase, "dom_choices_dbg": build_domain_choices()})
+
 
 @login_required
 @require_POST
-def showcase_delete(request, key):
-    showcase = _get_showcase_by_key(request, key)
+def showcase_delete(request, pk):
+    showcase = get_object_or_404(Showcase, pk=pk)
     showcase.delete()
     return redirect("showcases_admin")
 

@@ -102,13 +102,15 @@
             
 
             <td class="actions">
-              <a class="btn-sm" href="{% url 'cards_admin' sc.slug %}">Карточки</a>
-              <a class="btn-sm" href="{% url 'showcase_edit' sc.slug %}">Редактировать</a>
-              <form method="post" action="{% url 'showcase_duplicate' sc.id %}" style="display:inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn-sm">Дублировать</button>
+              <a class="btn-sm" href="{% url 'cards_admin' pk=sc.id %}">Карточки</a>
+              <a class="btn-sm" href="{% url 'showcase_edit' pk=sc.id %}">Редактировать</a>
+
+              <form method="post" action="{% url 'showcase_duplicate' pk=sc.id %}" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm">Дублировать</button>
               </form>
-              <form method="post" action="{% url 'showcase_delete' sc.slug %}" style="display:inline" 
+
+              <form method="post" action="{% url 'showcase_delete' pk=sc.id %}" style="display:inline"
                     onsubmit="return confirm('Удалить витрину «{{ sc.name }}»?');">
                 {% csrf_token %}
                 <button type="submit" class="btn-sm danger">Удалить</button>
