@@ -61,15 +61,16 @@ def index(request):
     cards = Card.objects.filter(active=True).order_by("order_index", "id")
     return render(request, "index.html", {"cards": cards})
 
-def showcase_detail(request, key):
-    showcase = _get_showcase_by_key(request, key)
+
+def showcase_detail(request, slug):
+    showcase = get_object_or_404(Showcase, slug=slug)
     cards = showcase.cards.filter(active=True).order_by("order_index", "id")
 
     templates = []
     tpl = (showcase.template or "").strip()
     if tpl and tpl != "default":
         templates.append(f"themes/{tpl}/index.html")
-    templates.append("index.html")  # дефолт
+    templates.append("index.html")
 
     return render(request, templates, {"cards": cards, "showcase": showcase})
 
