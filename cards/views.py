@@ -5,7 +5,7 @@ from .models import Card, Showcase, Logo
 from .forms import CardForm, ShowcaseForm, build_domain_choices, LogoForm
 from django.views.decorators.http import require_POST
 from django.http import Http404
-from utils.host import canonical_host
+from cards.utils.host import canonical_host
 from django.shortcuts import get_object_or_404, redirect
 from .models import Showcase
 
