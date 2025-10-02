@@ -46,6 +46,29 @@ def index(request):
     return render(request, "index.html", {"cards": cards})
 
 
+@login_required
+def showcase_add(request):
+    if request.method == "POST":
+        form = ShowcaseForm(request.POST)
+        if form.is_valid():
+            sc = form.save()
+            # при желании — сразу перейти к редактированию карточек:
+            # return redirect("cards_admin", pk=sc.pk)
+            return redirect("showcases_admin")
+    else:
+        form = ShowcaseForm()
+
+    return render(
+        request,
+        "admin_showcase_form.html",
+        {
+            "form": form,
+            "showcase": None,  # чтобы шаблон не ожидал существующий объект
+            "dom_choices_dbg": build_domain_choices(),
+        },
+    )
+
+
 def showcase_detail(request, slug):
     showcase = get_object_or_404(Showcase, slug=slug)
     cards = showcase.cards.filter(active=True).order_by("order_index", "id")
