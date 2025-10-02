@@ -62,8 +62,12 @@ def index(request):
     return render(request, "index.html", {"cards": cards})
 
 
-def showcase_detail(request, slug):
-    showcase = get_object_or_404(Showcase, slug=slug)
+def showcase_detail(request, key):
+    if key.isdigit():
+        showcase = get_object_or_404(Showcase, pk=int(key))
+    else:
+        showcase = get_object_or_404(Showcase, slug=key)
+
     cards = showcase.cards.filter(active=True).order_by("order_index", "id")
 
     templates = []
