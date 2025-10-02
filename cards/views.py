@@ -33,12 +33,27 @@ def _get_showcase_by_key(request, key: str) -> Showcase:
     s = str(key).strip()
     qs = Showcase.objects.all()
 
-    # пробуем по id
+    # сначала пробуем по id
     if s.isdigit():
-        return get_object_or_404(Showcase, pk=int(s))
+        try:
+            return qs.get(pk=int(s))
+        except Showcase.DoesNotExist:
+            # если витрины с таким id нет — пробуем искать как slug
+            pass
 
-    # пробуем по slug
-    return get_object_or_404(Showcase, slug=s)
+    qs = qs.filter(slug=s)
+
+    from django.conf import settings
+    if settings.DEBUG:
+        if not qs.exists():
+            raise Http404("Showcase not found")
+        return qs.first()
+
+    host = request.get_host().split(":")[0]
+    candidates = [sc for sc in qs if host in sc.domains_list()]
+    if not candidates:
+        raise Http404("Showcase not found")
+    return candidates[0]
 
 
 # ---------- публичка ----------
@@ -47,8 +62,14 @@ def index(request):
     return render(request, "index.html", {"cards": cards})
 
 
-def showcase_detail(request, slug):
-    showcase = get_object_or_404(Showcase, slug=slug)
+def showcase_detail(request, key):
+    # если передан ID (число)
+    if key.isdigit():
+        showcase = get_object_or_404(Showcase, pk=int(key))
+    else:
+        # иначе ищем по slug
+        showcase = get_object_or_404(Showcase, slug=key)
+
     cards = showcase.cards.filter(active=True).order_by("order_index", "id")
 
     templates = []
