@@ -32,7 +32,7 @@ class Showcase(models.Model):
     class Meta:
         constraints = [
                 models.UniqueConstraint(
-                    fields=["domain", "slug"],
+                    fields=["domains", "slug"],
                     name="uniq_showcase_per_domain",
                 ),
             ]

@@ -71,7 +71,7 @@ def showcase_add(request):
 def showcase_detail(request, slug):
     host = canonical_host(request)
     showcase = get_object_or_404(Showcase, slug=slug, domain__iexact=host)
-    return render(request, "cards/showcase_detail.html", {"showcase": showcase})
+    return render(request, "cards/admin_showcases.html", {"showcase": showcase})
 
 
 # ---------- админка ----------
