@@ -55,9 +55,12 @@
           <div class="card__amount">{{ c.price|default:"100000" }} ₽</div>
         </div>
 
-        <a class="card__btn" href="{{ c.btn_url|default:'#' }}" {% if c.btn_url %}target="_blank" rel="noopener"{% endif %}>
-          {{ c.btn_text|default:"Получить деньги" }}
-        </a>
+
+          {% if c.get_full_btn_url %}
+            <a class="btn" href="{{ c.get_full_btn_url }}" target="_blank" rel="noopener noreferrer">
+              {{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}
+            </a>
+          {% endif %}
 
         {% if c.fine_print %}
           <div class="fine-print">{{ c.fine_print }}</div>
@@ -97,5 +100,19 @@
     </div>
   </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const params = window.location.search; // ?utm_source=...
+  if (!params) return;
+
+  document.querySelectorAll('.card a.btn').forEach(link => {
+    const originalHref = link.getAttribute('data-href'); // читаем оригинальный URL
+    if (originalHref && originalHref !== '#') {
+      const sep = originalHref.includes('?') ? '&' : '?';
+      link.setAttribute('href', originalHref + sep + params.slice(1));
+    }
+  });
+});
+</script>
 </body>
 </html>

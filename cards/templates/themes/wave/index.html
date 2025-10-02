@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Займы на карту 24/7</title>
+
+  <style>
+    @charset "UTF-8";
+    * {
+        box-sizing: border-box;
+        color: #203152;
+        font-family: 'Manrope', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .cont {
+        width: 1200px;
+        max-width: 100%;
+        padding: 0 20px;
+        margin: 0 auto;
+    }
+
+    /* ================= ШАПКА ================= */
+    .header {
+      position: relative;
+      background: linear-gradient(to bottom, #fff 0%, #f7faff 100%);
+      padding: 40px 20px 120px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 600;
+      margin: 0 0 20px;
+      color: #0f1b3d;
+    }
+
+    .benefits {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      font-size: 18px;
+      color: #0f1b3d;
+    }
+
+    .benefit {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .benefit::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 2px;
+      width: 20px;
+      height: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 9L2 7l6 5L18 0l2 2-12 16z' fill='%232ecc71'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .header-wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      line-height: 0;
+    }
+
+    .header-wave svg {
+      display: block;
+      width: 100%;
+      height: 100px;
+    }
+
+    /* ================= ТАБЛИЦА ЗАЙМОВ ================= */
+    .block2 {
+      margin: 60px 0 150px;
+    }
+
+    .block2__table .row {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      transition: background .3s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .block2__table .row:hover {
+      background: #f2f6ff;
+    }
+
+    .block2__table .row img {
+      max-height: 45px;
+      max-width: 170px;
+    }
+
+    .block2__table .row .summa {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .block2__table .row .stavka,
+    .block2__table .row .vozrast {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .block2__table .row .link {
+      display: block;
+      width: 195px;
+      padding: 14px 4px;
+      border-radius: 6px;
+      background: #fff;
+      color: #000;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: .3s;
+    }
+
+    .block2__table .row .link:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .block2__table .row > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20%;
+      text-align: center;
+    }
+
+    .fine-print {
+      text-align: center;
+      font-size: 10px;
+      color: #888;
+      margin: 5px 0 15px;
+    }
+
+    /* ================= ФУТЕР ================= */
+    .footer {
+      background: #f4f7ff;
+      padding: 30px 40px;
+      color: #8a8f98;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .footer__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* --- АДАПТИВ --- */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .benefits {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 16px;
+      }
+
+      /* --- АДАПТИВ --- */
+  .block2__table .row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    gap: 12px;
+  }
+
+  /* логотип */
+  .block2__table .row .col:first-child {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+
+  /* делаем из суммы, ставки и возраста одну линию */
+  .block2__table .row .col:nth-child(2),
+  .block2__table .row .col:nth-child(3),
+  .block2__table .row .col:nth-child(4) {
+    width: auto;
+    flex: 1;
+    text-align: center;
+  }
+
+  .block2__table .row {
+    display: block;
+  }
+
+  .block2__table .row .info-line {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  /* кнопка во всю ширину */
+  .block2__table .row .col:last-child {
+    width: 100%;
+  }
+
+  .block2__table .row .link {
+    width: 100%;
+    padding: 14px;
+    font-size: 14px;
+    background: #000;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  /* мелкий текст */
+  .fine-print {
+    text-align: left;
+    font-size: 10px;
+    color: #888;
+    margin-top: 6px;
+  }
+}
+
+
+      .footer {
+        font-size: 12px;
+        padding: 20px;
+      }
+    
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <h1>Займы на карту 24/7</h1>
+  <div class="benefits">
+    <div class="benefit">Без комиссий</div>
+    <div class="benefit">Одобрение 96%</div>
+    <div class="benefit">Для получения нужной суммы вы можете оформить 2–3 займа в разных МФО!</div>
+  </div>
+
+  <!-- Волна -->
+  <div class="header-wave">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#ffffff" fill-opacity="1"
+        d="M0,192L60,170.7C120,149,240,107,360,117.3C480,128,600,192,720,229.3C840,267,960,277,1080,240C1200,203,1320,117,1380,74.7L1440,32L1440,320L0,320Z">
+      </path>
+    </svg>
+  </div>
+</header>
+
+<main>
+  <div class="cont">
+    <section class="block2">
+      <div class="block2__table">
+
+       {% for c in cards %}
+        <a
+          href="{{ c.get_full_btn_url|default:'#' }}"
+          target="_blank"
+          class="row item"
+        >
+          <!-- Логотип / бренд -->
+          <div class="col">
+            {% if c.logo %}
+              <img src="{{ c.logo.image.url }}" alt="{{ c.title }}">
+            {% else %}
+              <span class="brand-text">{{ c.title }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Сумма -->
+          <div class="col">
+            <span class="summa">{{ c.price|default:"30 000 ₽" }}</span>
+          </div>
+
+          <!-- Ставка -->
+          <div class="col">
+            <span class="stavka">{{ c.rate_line|default:"0%" }}</span>
+          </div>
+
+          <!-- Возраст -->
+          <div class="col">
+            <span class="vozrast">{{ c.age_line|default:"от 18 лет" }}</span>
+          </div>
+
+          <!-- Кнопка -->
+          <div class="col">
+            {% if c.get_full_btn_url %}
+              <span class="link">{{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}</span>
+            {% else %}
+              <span class="link" style="pointer-events:none;opacity:.6;">Недоступно</span>
+            {% endif %}
+          </div>
+        </a>
+
+        {% if c.fine_print or c.advertiser %}
+          <div class="fine-print">{{ c.fine_print }}</div>
+        {% endif %}
+       {% endfor %}
+
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© 2025 Онлайн займы</p>
+    <p>Сайт НЕ является представительством МФО или банком, не осуществляет выдачу займов и кредитов.</p>
+    <p>Все рекомендуемые на сайте кредитные учреждения имеют соответствующие лицензии.</p>
+    <p>ИП Игнатьева Ольга Юрьевна ОГРНИП 321470400066488</p>
+  </div>
+</footer>
+
+</body>
+</html>

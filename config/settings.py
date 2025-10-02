@@ -26,14 +26,16 @@ INSTALLED_APPS = [
 ]
 
 DOMAINS_ALLOWED = [
-    "localhost", "127.0.0.1",
+    "localhost", "127.0.0.1",       
+    "xn--d1asbcbidu0b.xn--p1ai",    #сподручно.рф
     "xn--80aatfbqgidf6l.xn--p1ai",  # заимыонлаин.рф
     "xn--80anhmuy1c.online",        # займырф.online (пример)
     "xn--80agfgliehw.xn--p1ai",     # займлегко.рф (пример)
     # при желании — и юникод-формы:
+    "сподручно.рф"
     "заимыонлаин.рф",
     "займырф.online",
-      "займлегко.рф",
+    "займлегко.рф",
 ]
 
 MIDDLEWARE = [

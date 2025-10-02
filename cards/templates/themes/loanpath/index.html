@@ -1,0 +1,304 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Быстрые займы на карту</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; background:#f0f7fc; color:#111827; }
+    .container { max-width:1150px; margin:0 auto; padding:0 20px;}
+
+    /* ===== HEADER ===== */
+    header { background:#fff; padding:50px 0 0; }
+    .header-inner { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:40px; }
+    .hero-left { max-width:540px; }
+    header img.logo { height:58px; margin-bottom:20px; }
+    .hero-text h1 { font-size:36px; margin-bottom:16px; line-height:1.3; font-weight:700; }
+    .hero-text p { font-size:18px; color:#374151; line-height:1.5; }
+    .hero-hand img { max-width:280px; }
+
+    /* ===== NOTICE ===== */
+    .notice { margin:30px 0; padding:16px 20px; border:1px solid #3b82f6; background:#fff; border-radius:8px; text-align:center; color:#1e40af; font-size:15px; }
+
+    /* ===== TITLES ===== */
+    h2 { text-align:center; margin:50px 0 25px; font-size:24px; font-weight:700; }
+
+    /* ===== CARDS ===== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+      margin-bottom: 50px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .card-logo img {
+      max-width: 150px;
+      max-height: 70px;
+      margin: 0 auto 20px;
+      object-fit: contain;
+      display:block;
+    }
+
+    .card-lines {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+
+    .card-lines div { flex: 1; }
+    .card-lines span:first-child {
+      display:block; font-size:14px; color:#6b7280;
+    }
+    .card-lines span:last-child {
+      display:block; font-size:16px; font-weight:700; color:#000; margin-top:4px;
+    }
+
+    .card .btn {
+      display:block;
+      width:100%;
+      max-width:240px;
+      margin:0 auto;
+      background:#3b82f6;
+      color:#fff;
+      padding:13px 0;
+      border-radius:6px;
+      text-decoration:none;
+      font-weight:600;
+      transition:.2s;
+    }
+    .card .btn:hover { background:#2563eb; }
+
+    .card .fine-print {
+      margin-top:12px;
+      font-size:12px;
+      color:#6b7280;
+      line-height:1.4;
+      min-height:32px;
+    }
+
+    /* ===== BENEFITS ===== */
+    .benefits { background:#fff; padding:70px 0; }
+    .benefits .container { max-width:850px; }
+    .benefits-list { display:flex; flex-direction:column; gap:22px; }
+    .benefit {
+      display:flex;
+      align-items:center;
+      gap: 35px;
+      margin-left: 150px;
+    }
+    .benefit .icon-placeholder {
+      width:40px;
+      height:40px;
+      background:transparent; /* оставляем место под иконку */
+      flex-shrink:0;
+    }
+    .benefit p {
+      font-size:18px;
+      font-weight:600;
+      margin:0;
+      color:#0f172a;
+    }
+
+    /* адаптив */
+    @media (max-width:768px) {
+      .header-inner { flex-direction:column; text-align:center; }
+      .hero-left { max-width:100%; }
+      .hero-hand img { margin:0 auto; }
+      .card-lines { flex-direction:column; gap:12px; }
+      .benefit { flex-direction:row; text-align:left; }
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background:#eaf5fc;
+      padding:40px 0;
+      font-size:14px;
+      color:#788598;
+      line-height: 10px;
+    }
+    .footer-inner {
+      max-width:1150px;
+      margin:0 auto;
+      padding:0 20px;
+      text-align:left; /* всё по левому краю */
+    }
+    .footer-logo img {
+      height:26px;
+      margin-bottom:50px;
+    }
+    .footer-text p {
+      margin:0 0 10px 0;
+      line-height:1.5;
+    }
+    .copy {
+      font-size:13px;
+      color:#6b7280;
+      margin-top:30px;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="container header-inner">
+    <div class="hero-left">
+      <img src="{% static 'img/logo(2).svg' %}" alt="Лого" class="logo">
+      <div class="hero-text">
+        <h1>Быстрые онлайн займы на карту!</h1>
+        <p>Оставьте заявку в 3 компаниях для гарантируемого получения займа</p>
+      </div>
+    </div>
+    <div class="hero-hand">
+      <img src="{% static 'img/hand.png' %}" alt="Телефон">
+    </div>
+  </div>
+</header>
+
+<!-- ===== NOTICE ===== -->
+<div class="container">
+  <div class="notice">
+    <b>Важно!</b> Оставляйте заявки только в те компании, куда вы ранее не обращались.
+  </div>
+
+  <!-- ===== TOP OFFERS ===== -->
+  <h2>ТОП 3 предложения</h2>
+  <div class="cards">
+    {% for c in cards|slice:":3" %}
+      <div class="card">
+        <div>
+          <div class="card-logo">
+            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
+          </div>
+          <div class="card-lines">
+            <div><span>Сумма</span><span>{{ c.price }}</span></div>
+            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
+          </div>
+        </div>
+        <div>
+          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
+          <div class="fine-print">{{ c.fine_print }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- ===== MORE OFFERS ===== -->
+  <h2>Дополнительные предложения</h2>
+  <div class="cards">
+    {% for c in cards|slice:"3:" %}
+      <div class="card">
+        <div>
+          <div class="card-logo">
+            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
+          </div>
+          <div class="card-lines">
+            <div><span>Сумма</span><span>{{ c.price }}</span></div>
+            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
+          </div>
+        </div>
+        <div>
+          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
+          <div class="fine-print">{{ c.fine_print }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+    <!-- ===== TOP OFFERS ===== -->
+  <h2>ТОП 3 предложения</h2>
+  <div class="cards">
+    {% for c in cards|slice:":3" %}
+      <div class="card">
+        <div>
+          <div class="card-logo">
+            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
+          </div>
+          <div class="card-lines">
+            <div><span>Сумма</span><span>{{ c.price }}</span></div>
+            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
+          </div>
+        </div>
+        <div>
+          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
+          <div class="fine-print">{{ c.fine_print }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- ===== BENEFITS ===== -->
+<section class="benefits">
+  <div class="container">
+    <div class="benefits-list">
+      <div class="benefit">
+        <div class="icon-placeholder">
+          <img src="{% static 'img/loan/icon1.svg' %}" alt="">
+        </div>
+        <p>Актуальные условия микрофинансовых компаний</p>
+      </div>
+      <div class="benefit">
+        <div class="icon-placeholder">
+          <img src="{% static 'img/loan/icon2.svg' %}" alt="">
+        </div>
+        <p>Займы без отказа</p>
+      </div>
+      <div class="benefit">
+        <div class="icon-placeholder">
+          <img src="{% static 'img/loan/icon3.svg' %}" alt="">
+        </div>
+        <p>Помогаем получить займ срочно</p>
+      </div>
+      <div class="benefit">
+        <div class="icon-placeholder">
+          <img src="{% static 'img/loan/icon4.svg' %}" alt="">
+        </div>
+        <p>Знаем, какие банки дают займ круглосуточно</p>
+      </div>
+      <div class="benefit">
+        <div class="icon-placeholder">
+          <img src="{% static 'img/loan/icon5.svg' %}" alt="">
+        </div>
+        <p>Займ на карту онлайн за пару кликов</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo">
+      <img src="{% static 'img/logo(2).svg' %}" alt="Займы 24">
+    </div>
+    <div class="footer-text">
+      <p>Сайт <b>НЕ</b> является представительством МФО или банком, не выдает займов и кредитов.</p>
+      <p>Все рекомендуемые на сайте кредитные учреждения имеют соответствующие лицензии. Условия неуплаты можно уточнить на сайте МФО.</p>
+    </div>
+    <p class="copy">© 2025 cashlux.ru</p>
+  </div>
+</footer>
+
+
+</body>
+</html>

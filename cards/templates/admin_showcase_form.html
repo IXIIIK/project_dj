@@ -65,6 +65,13 @@
     </div>
 
     <div class="form-row">
+      {{ form.extra_params.label_tag }}
+      {{ form.extra_params }}
+      <div class="help">{{ form.extra_params.help_text }}</div>
+      {{ form.extra_params.errors }}
+    </div>
+
+    <div class="form-row">
       {{ form.domains.label_tag }}
 
       {# Явно рендерим каждую опцию — без завязки на шаблоны виджетов #}

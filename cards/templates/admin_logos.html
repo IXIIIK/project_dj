@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Логотипы</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}?v=17">
+  <style>
+    .logos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* ровно 4 в ряд */
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .logo-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+      padding: 16px;
+      text-align: center;
+      transition: transform .2s;
+    }
+    .logo-card:hover {
+      transform: translateY(-4px);
+    }
+    .logo-card img {
+      max-width: 100%;
+      max-height: 120px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    .logo-card .name {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .backlink {
+      display: inline-block;
+      margin-top: 30px;
+      color: #5A7BFF;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h2>Логотипы</h2>
+    <a class="btn" href="{% url 'logo_add' %}">+ Добавить</a>
+  </div>
+
+  <div class="logos-grid">
+    {% for l in page_obj.object_list %}
+      <div class="logo-card">
+        {% if l.image %}<img src="{{ l.image.url }}" alt="{{ l.name }}">{% endif %}
+        <div class="name">{{ l.name }}</div>
+        <a class="btn-sm danger" href="{% url 'logo_delete' l.id %}" onclick="return confirm('Удалить {{ l.name }}?')">Удалить</a>
+      </div>
+    {% empty %}
+      <div>Пока нет логотипов.</div>
+    {% endfor %}
+  </div>
+
+  <a href="{% url 'showcases_admin' %}" class="backlink">← Назад к витринам</a>
+</div>
+</body>
+</html>

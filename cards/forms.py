@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from django import forms
 from django.conf import settings
-from .models import Showcase, Card
+from .models import Showcase, Card, Logo
 
 # ---------------- utils ----------------
 
@@ -81,7 +81,11 @@ def get_theme_choices():
 # ---------------- forms ----------------
 
 class ShowcaseForm(forms.ModelForm):
-    template = forms.ChoiceField(choices=(), required=False)
+    template = forms.ChoiceField(
+        choices=[],
+        required=False,
+        widget=forms.Select
+    )
     domains = forms.MultipleChoiceField(
         required=False,
         choices=[],
@@ -90,17 +94,25 @@ class ShowcaseForm(forms.ModelForm):
 
     class Meta:
         model = Showcase
-        fields = ["name", "template", "slug", "domains"]
+        fields = ["name", "template", "slug", "domains", "extra_params"]
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Название"}),
             "slug": forms.TextInput(attrs={"placeholder": "URL-имя (после /)"}),
+            "extra_params": forms.TextInput(attrs={"placeholder": "aff_id=42&sub=abc"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields["extra_params"].label = "Доп. метки (GET-параметры)"
+        self.fields["extra_params"].help_text = "Формат: key=value&key2=value2 (без вопросительного знака)"
         # choices для тем
         self.fields["domains"].widget = forms.CheckboxSelectMultiple()
+
+        theme_choices = get_theme_choices()
+        print(">>> DEBUG get_theme_choices:", theme_choices)
+        self.fields["template"].choices = theme_choices
+        self.fields["template"].label = "Тема"
 
         # домены из settings
         print(">>> DEBUG DOMAINS_ALLOWED:", settings.DOMAINS_ALLOWED)
@@ -159,9 +171,32 @@ class CardForm(forms.ModelForm):
             "btn_text", "btn_url", "fine_print", "logo",
             "order_index", "active",
         ]
+        widgets = {
+            "btn_url": forms.URLInput(attrs={
+                "placeholder": "https://partner.ru/apply"
+            }),
+        }
+        help_texts = {
+            "btn_url": ""  # уберём help_text из подсказки под полем
+        }
 
     def __init__(self, *args, showcase=None, **kwargs):
         super().__init__(*args, **kwargs)
         if showcase is not None:
             self.fields["showcase"].initial = showcase
             self.fields["showcase"].widget = forms.HiddenInput()
+
+    def clean_btn_url(self):
+        u = (self.cleaned_data.get("btn_url") or "").strip()
+        if not u:
+            return u
+        # добавим https:// если пользователь не указал схему
+        if not re.match(r"^https?://", u, re.I):
+            u = "https://" + u.lstrip("/")
+        return u
+
+
+class LogoForm(forms.ModelForm):
+    class Meta:
+        model = Logo
+        fields = ["name", "image"]

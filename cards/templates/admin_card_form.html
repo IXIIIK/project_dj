@@ -2,89 +2,71 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if card %}Редактировать{% else %}Добавить{% endif %} карточку</title>
-  <link rel="stylesheet" href="/static/style.css?v=17">
+  <title>{% if card %}Редактировать{% else %}Новая{% endif %} карточка — {{ showcase.name }}</title>
+  <link rel="stylesheet" href="/static/style.css?v=21">
   <style>
-    .wrap{max-width:640px;margin:24px auto;padding:0 18px}
-    form{display:flex;flex-direction:column;gap:16px;background:#fff;padding:24px;border-radius:12px;box-shadow:var(--shadow)}
-    label{font-weight:600;margin-bottom:4px;display:block}
-    input,textarea,select{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%}
-    .btn{padding:10px 16px;border-radius:6px;background:#5A7BFF;color:#fff;text-decoration:none;border:none;cursor:pointer}
-    .field{display:flex;flex-direction:column}
-    .checkbox-inline{display:flex;align-items:center;gap:8px}
+    .wrap{max-width:720px;margin:32px auto;padding:0 18px}
+    form{background:#fff;border-radius:16px;box-shadow:0 10px 25px rgba(16,24,40,.06);padding:24px}
+    .form-row{margin-bottom:16px}
+    .form-row label{display:block;margin-bottom:6px;font-weight:600}
+    .form-row input[type=text], .form-row input[type=number], .form-row textarea{
+      width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px
+    }
+    .help{color:#64748b;font-size:13px;margin-top:4px}
+    .btn{display:inline-block;background:#5A7BFF;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+    .form-row input[type=text],
+    .form-row input[type=url],
+    .form-row select,
+    .form-row textarea {
+      width:100%;
+      padding:10px 12px;
+      border:1px solid rgb(160, 160, 160);
+      border-radius:8px;
+      font-size:14px;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="crumbs" style="margin:0 0 12px">
-      <a href="{% url 'showcases_admin' %}">← К витринам</a> ·
-      <a href="{% url 'cards_admin' showcase.slug %}">Карточки — {{ showcase.name }}</a>
+<div class="wrap">
+  <h2>{% if card %}Редактировать{% else %}Новая{% endif %} карточка — {{ showcase.name }}</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-row">{{ form.title.label_tag }}{{ form.title }}</div>
+
+    <div class="form-row">{{ form.price.label_tag }}{{ form.price }}</div>
+
+    <div class="form-row">{{ form.rate_line.label_tag }}{{ form.rate_line }}</div>
+
+    <div class="form-row">{{ form.age_line.label_tag }}{{ form.age_line }}</div>
+
+    <div class="form-row">
+      {{ form.btn_text.label_tag }}{{ form.btn_text }}
     </div>
 
-    <h2>{% if card %}Редактировать{% else %}Добавить{% endif %} карточку</h2>
+    <div class="form-row">
+      {{ form.btn_url.label_tag }}{{ form.btn_url }}
+      <div class="help">Пример: <code>partner.ru/apply</code> или полный <code>https://partner.ru/apply</code>. Схема добавится автоматически.</div>
+      {{ form.btn_url.errors }}
+    </div>
 
-    <!-- ВАЖНО: открываем форму, csrf и скрытое поле витрины -->
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.showcase }}
+    <div class="form-row">{{ form.fine_print.label_tag }}{{ form.fine_print }}</div>
 
-      <div class="field">
-        <label for="id_title">Название</label>
-        {{ form.title }}
-      </div>
+    <div class="form-row">{{ form.logo.label_tag }}{{ form.logo }}</div>
 
-      <div class="field">
-        <label for="id_price">Цена</label>
-        {{ form.price }}
-      </div>
+    <div class="form-row">{{ form.order_index.label_tag }}{{ form.order_index }}</div>
 
-      <div class="field">
-        <label for="id_rate_line">Ставка</label>
-        {{ form.rate_line }}
-      </div>
+    <div class="form-row">{{ form.active.label_tag }}{{ form.active }}</div>
 
-      <div class="field">
-        <label for="id_age_line">Возраст</label>
-        {{ form.age_line }}
-      </div>
+    {# скрытое поле привязки к витрине #}
+    {{ form.showcase }}
 
-      <div class="field">
-        <label for="id_btn_text">Текст кнопки</label>
-        {{ form.btn_text }}
-      </div>
-
-      <div class="field">
-        <label for="id_btn_url">Ссылка кнопки</label>
-        {{ form.btn_url }}
-      </div>
-
-      <div class="field">
-        <label for="id_fine_print">Мелкий текст</label>
-        {{ form.fine_print }}
-      </div>
-
-      <div class="field">
-        <label for="id_logo">Логотип</label>
-        {{ form.logo }}
-        {% if card and card.logo %}
-          <p>Текущий: <img src="{{ card.logo.url }}" alt="" style="height:40px"></p>
-        {% endif %}
-      </div>
-
-      <div class="field">
-        <label for="id_order_index">Позиция</label>
-        {{ form.order_index }}
-      </div>
-
-      <div class="field checkbox-inline">
-        {{ form.active }} <label for="id_active">Активна</label>
-      </div>
-
-      <button type="submit" class="btn">Сохранить</button>
-    </form>
-
-    <p><a href="{% url 'cards_admin' showcase.id %}">← Назад к списку карточек</a></p>
-  </div>
+    <button type="submit" class="btn">Сохранить</button>
+    <a class="btn" style="background:#e5e7eb;color:#111827;margin-left:8px"
+       href="{% url 'cards_admin' showcase.slug %}">Отмена</a>
+  </form>
+</div>
 </body>
 </html>

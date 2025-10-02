@@ -3,7 +3,7 @@ version: "3.9"
 services:
   db:
     image: postgres:16-alpine
-    env_file: .env        # или вообще убрать, если используешь только .env
+    env_file: .env
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -33,13 +33,24 @@ services:
       - web
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_data:/var/www/static:ro
       - media_data:/var/www/media:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/www/certbot
     restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/www/certbot
 
 volumes:
   db_data:
   static_data:
   media_data:
+  certbot-etc:
+  certbot-var:

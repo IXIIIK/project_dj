@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import Card, Showcase
-from .forms import CardForm, ShowcaseForm, build_domain_choices
+from .models import Card, Showcase, Logo
+from .forms import CardForm, ShowcaseForm, build_domain_choices, LogoForm
 from django.views.decorators.http import require_POST
 from django.http import Http404
 from config import settings
@@ -118,7 +118,6 @@ def showcase_duplicate(request, key):
 @login_required
 def card_add(request, key):
     showcase = _get_showcase_by_key(request, key)
-
     if request.method == "POST":
         form = CardForm(request.POST, request.FILES, showcase=showcase)
         if form.is_valid():
@@ -128,14 +127,7 @@ def card_add(request, key):
             return redirect("cards_admin", key=showcase.slug)
     else:
         form = CardForm(showcase=showcase)
-
-    return render(
-        request,
-        "admin_card_form.html",
-        {"form": form, "showcase": showcase},
-    )
-
-
+    return render(request, "admin_card_form.html", {"form": form, "showcase": showcase})
 
 @login_required
 def card_edit(request, key, pk):
@@ -190,3 +182,28 @@ def showcase_delete(request, key):
     showcase = _get_showcase_by_key(request, key)
     showcase.delete()
     return redirect("showcases_admin")
+
+
+
+@login_required
+def logos_admin(request):
+    qs = Logo.objects.order_by("-id")
+    page_obj = Paginator(qs, 20).get_page(request.GET.get("page"))
+    return render(request, "admin_logos.html", {"page_obj": page_obj})
+
+@login_required
+def logo_add(request):
+    if request.method == "POST":
+        form = LogoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("logos_admin")
+    else:
+        form = LogoForm()
+    return render(request, "admin_logo_form.html", {"form": form})
+
+@login_required
+def logo_delete(request, pk):
+    logo = get_object_or_404(Logo, pk=pk)
+    logo.delete()
+    return redirect("logos_admin")

@@ -56,7 +56,7 @@
         <div class="card-top">
           <div class="card-logo">
             {% if c.logo %}
-              <img src="{{ c.logo.url }}" alt="">
+              <img src="{{ c.logo.image.url }}" alt="{{ c.logo.name }}">
             {% endif %}
           </div>
         </div>
@@ -67,9 +67,11 @@
           <span>{{ c.rate_line|default:'0% в день' }}</span>
           <span>{{ c.age_line|default:'от 18 лет' }}</span>
         </div>
-
-        <a class="btn" href="" data-href="{{ c.btn_url|default:'#' }}"{% if c.btn_url %} target="_blank" rel="noopener"{% endif %}>ПОЛУЧИТЬ ДЕНЬГИ</a>
-
+          {% if c.get_full_btn_url %}
+            <a class="btn" href="{{ c.get_full_btn_url }}" target="_blank" rel="noopener noreferrer">
+              {{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}
+            </a>
+          {% endif %}
         <div class="fine-print">{{ c.fine_print|default:'Решение по заявке принимается в течение нескольких минут.' }}</div>
       </article>
     {% endfor %}
