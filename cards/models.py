@@ -80,6 +80,29 @@ class Showcase(models.Model):
                     label = raw
             pairs.append((ascii_host, label))
         return pairs
+    
+    def domains_ascii_set(self):
+        """
+        Возвращает множество доменов витрины в ascii (punycode), lower.
+        Разбирает по переносам/запятым/пробелам и нормализует.
+        """
+        raw = (self.domains or "")
+        # Разрешим запятые тоже как разделители
+        raw = raw.replace(",", "\n")
+        hosts = set()
+        for line in raw.splitlines():
+            h = line.strip()
+            if not h:
+                continue
+            try:
+                h_ascii = idna.encode(h, uts46=True).decode("ascii").lower()
+            except Exception:
+                h_ascii = h.lower()
+            hosts.add(h_ascii)
+        return hosts
+
+def matches_host(self, ascii_host: str) -> bool:
+    return ascii_host.lower() in self.domains_ascii_set()
 
     def save(self, *args, **kwargs):
         if not self.slug:

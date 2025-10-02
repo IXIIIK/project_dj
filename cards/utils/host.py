@@ -1,9 +1,16 @@
- # utils/host.py
-def canonical_host(request):
-    # учтём прокси, если используешь X-Forwarded-Host
-    host = request.get_host().split(':')[0]  # без порта
+# cards/utils/host.py
+import idna
+
+def canonical_host(request_or_host: str):
+    """
+    Принимает request или строку-хост. Возвращает ascii (punycode), lower.
+    """
+    if hasattr(request_or_host, "get_host"):
+        host = request_or_host.get_host().split(":")[0]
+    else:
+        host = str(request_or_host).split(":")[0]
+
     try:
-        host_idna = host.encode('idna').decode('ascii')
+        return idna.encode(host, uts46=True).decode("ascii").lower()
     except Exception:
-        host_idna = host
-    return host_idna.lower()
+        return host.lower()

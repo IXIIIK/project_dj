@@ -8,6 +8,7 @@ from django.http import Http404
 from cards.utils.host import canonical_host
 from django.shortcuts import get_object_or_404, redirect
 from .models import Showcase
+from config import settings
 
 
 
@@ -69,19 +70,39 @@ def showcase_add(request):
 
 
 def showcase_detail(request, slug):
-    host = request.get_host().split(":")[0].lower()
+    host = canonical_host(request)  # нормализуем домен (punycode + lower)
 
-    # фильтруем витрину по slug и домену
-    showcase = get_object_or_404(Showcase, slug=slug, domains__iexact=host)
+    # 1) Находим витрины с таким slug
+    qs = Showcase.objects.filter(slug=slug).order_by("-created_at", "-id")
 
-    # если у витрины указан шаблон → берём его
-    if showcase.template:
-        template_name = f"themes/{showcase.template}/index.html"
+    # 2) Выбираем нужную витрину по домену (в PROD строго по домену)
+    sc = None
+    if settings.DEBUG:
+        sc = qs.first()
+        if sc is None:
+            raise Http404("Showcase not found")
     else:
-        # шаблон по умолчанию
-        template_name = "index.html"
+        for s in qs:
+            if s.matches_host(host):  # см. методы ниже
+                sc = s
+                break
+        if sc is None:
+            raise Http404("Showcase not found for this domain")
 
-    return render(request, template_name, {"showcase": showcase})
+    # 3) Собираем карточки витрины
+    cards = (
+        sc.cards.filter(active=True)
+        .select_related("logo")
+        .order_by("order_index", "id")
+    )
+
+    # 4) Определяем шаблон
+    template_name = f"themes/{sc.template}/index.html" if sc.template else "index.html"
+
+    return render(request, template_name, {
+        "showcase": sc,
+        "cards": cards,         # ← ЭТО ВАЖНО
+    })
 
 
 # ---------- админка ----------
