@@ -19,20 +19,27 @@
 }
 
 /* базовая типографика */
-*{box-sizing:border-box}
-html,body{
+html { height: 100%; }                /* только html получает height */
+body{
   margin:0;padding:0;background:var(--bg);color:var(--text);
   font:16px/1.45 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+
+  /* динамические vh для мобилок */
+  min-height: 100dvh;                 /* современно */
+  display:flex; 
+  flex-direction:column;
+}
+main { flex: 1 0 auto; min-height: 0; }  /* растягиваем контент, избегаем переполнения */
+
+@supports (-webkit-touch-callout: none) { /* iOS-фикс */
+  html { height: -webkit-fill-available; }
+  body { min-height: -webkit-fill-available; }
 }
 
-main {
-  flex: 1; /* растягиваем контент */
-}
+/* если хочешь, чтобы трюк с full-bleed не создавал горизонтальный скролл */
+html, body { overflow-x: hidden; }
+
 footer {
   margin-top: auto; /* прижимаем футер вниз */
 }
@@ -45,16 +52,12 @@ footer {
 /* ==== HERO v4: full-bleed (во всю ширину экрана) с текстурами ==== */
 .hero{
   position:relative;
-  width:100vw;              /* ширина экрана */
-  left:50%;                 /* трюк для полноширинного блока внутри центр-страницы */
-  right:50%;
-  margin-left:-50vw;
-  margin-right:-50vw;
-  margin-top:0;
-  margin-bottom:28px;
+  width:100vw;
+  left:50%;
+  transform:translateX(-50%);  /* вместо right/margin-хаков */
+  margin:0 0 28px;
   overflow:visible;
 }
-
 .hero-strip{
   position:relative;
   height:160px;             /* высота ленты */

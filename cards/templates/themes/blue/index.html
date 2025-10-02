@@ -36,9 +36,9 @@
       <article class="card">
         <!-- бренд на всю ширину -->
         <div class="card__brand">
-          {% if c.logo %}
-            <img class="card__logo" src="{{ c.logo.url }}" alt="{{ c.title }}">
-          {% else %}
+            {% if c.logo %}
+              <img src="{{ c.logo.image.url }}" alt="{{ c.logo.name }}">
+            {% endif %}
             <span class="card__brand-text">{{ c.title }}</span>
           {% endif %}
         </div>
