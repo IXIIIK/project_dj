@@ -29,6 +29,13 @@ class Showcase(models.Model):
         blank=True,
         help_text="Имя папки темы из cards/templates/themes/<template>/"
     )
+    class Meta:
+        constraints = [
+                models.UniqueConstraint(
+                    fields=["domain", "slug"],
+                    name="uniq_showcase_per_domain",
+                ),
+            ]
 
     def __str__(self):
         return self.name or f"Витрина {self.pk}"

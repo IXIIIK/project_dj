@@ -14,6 +14,11 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-not-secret")
 
 load_dotenv(BASE_DIR / ".env")
 
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,7 +37,7 @@ DOMAINS_ALLOWED = [
     "xn--80anhmuy1c.online",        # займырф.online (пример)
     "xn--80agfgliehw.xn--p1ai",     # займлегко.рф (пример)
     # при желании — и юникод-формы:
-    "сподручно.рф"
+    "сподручно.рф",
     "заимыонлаин.рф",
     "займырф.online",
     "займлегко.рф",

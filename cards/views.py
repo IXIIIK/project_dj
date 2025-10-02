@@ -5,8 +5,7 @@ from .models import Card, Showcase, Logo
 from .forms import CardForm, ShowcaseForm, build_domain_choices, LogoForm
 from django.views.decorators.http import require_POST
 from django.http import Http404
-from config import settings
-
+from utils.host import canonical_host
 from django.shortcuts import get_object_or_404, redirect
 from .models import Showcase
 
@@ -70,16 +69,9 @@ def showcase_add(request):
 
 
 def showcase_detail(request, slug):
-    showcase = get_object_or_404(Showcase, slug=slug)
-    cards = showcase.cards.filter(active=True).order_by("order_index", "id")
-
-    templates = []
-    tpl = (showcase.template or "").strip()
-    if tpl and tpl != "default":
-        templates.append(f"themes/{tpl}/index.html")
-    templates.append("index.html")
-
-    return render(request, templates, {"cards": cards, "showcase": showcase})
+    host = canonical_host(request)
+    showcase = get_object_or_404(Showcase, slug=slug, domain__iexact=host)
+    return render(request, "cards/showcase_detail.html", {"showcase": showcase})
 
 
 # ---------- админка ----------
