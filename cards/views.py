@@ -69,9 +69,19 @@ def showcase_add(request):
 
 
 def showcase_detail(request, slug):
-    host = canonical_host(request)
+    host = request.get_host().split(":")[0].lower()
+
+    # фильтруем витрину по slug и домену
     showcase = get_object_or_404(Showcase, slug=slug, domains__iexact=host)
-    return render(request, "admin_showcases.html", {"showcase": showcase})
+
+    # если у витрины указан шаблон → берём его
+    if showcase.template:
+        template_name = f"themes/{showcase.template}/index.html"
+    else:
+        # шаблон по умолчанию
+        template_name = "index.html"
+
+    return render(request, template_name, {"showcase": showcase})
 
 
 # ---------- админка ----------
