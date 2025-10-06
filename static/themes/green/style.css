@@ -121,7 +121,19 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 .card__btn:hover{ background:var(--lime-dark); }
 .card__btn:active{ transform:translateY(1px); }
 
-.fine-print{margin-top:8px;color:#8b949e;font-size:12px;  display: none !important;}
+  .fine-print{
+    margin-top:8px;
+    color:#98a1b3;
+    font-size:12px;
+    line-height:1.35;
+    text-align:center;
+  }
+
+  .fine-print__link{
+    color:inherit;
+    text-decoration:underline;
+  }
+  .fine-print__link:hover{ text-decoration:none; }
 
 /* ====== Benefits ====== */
 .benefits{ padding: 32px 0 0; }

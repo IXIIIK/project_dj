@@ -153,12 +153,21 @@
       text-align: center;
     }
 
-    .fine-print {
-      text-align: center;
-      font-size: 10px;
-      color: #888;
-      margin: 5px 0 15px;
-    }
+/* ВМЕСТО старого .fine-print{ ... display:none !important; } */
+  .fine-print{
+    margin-top:8px;
+    color:#98a1b3;
+    font-size:12px;
+    line-height:1.35;
+    text-align:center;
+  }
+
+  .fine-print__link{
+    color:inherit;
+    text-decoration:underline;
+  }
+  .fine-print__link:hover{ text-decoration:none; }
+
 
     /* ================= ФУТЕР ================= */
     .footer {

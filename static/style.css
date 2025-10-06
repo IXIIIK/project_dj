@@ -188,7 +188,19 @@ footer {
 }
 
 /* сноска */
-.fine-print{margin-top:8px;color:#98a1b3;font-size:11px;line-height:1.35;text-align:center}
+  .fine-print{
+    margin-top:8px;
+    color:#98a1b3;
+    font-size:12px;
+    line-height:1.35;
+    text-align:center;
+  }
+
+  .fine-print__link{
+    color:inherit;
+    text-decoration:underline;
+  }
+  .fine-print__link:hover{ text-decoration:none; }
 
 /* Подвал */
 .footer-band{position:relative;margin-top:40px;background: #0f2f7a;color:#e7efff;overflow:hidden; padding-bottom: 30px;}

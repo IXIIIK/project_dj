@@ -43,6 +43,22 @@
       text-align: center;
     }
 
+    /* ВМЕСТО старого .fine-print{ ... display:none !important; } */
+    .fine-print{
+      margin-top:8px;
+      color:#98a1b3;
+      font-size:12px;
+      line-height:1.35;
+      text-align:center;
+    }
+
+    .fine-print__link{
+      color:inherit;
+      text-decoration:underline;
+    }
+    .fine-print__link:hover{ text-decoration:none; }
+
+
     .card-logo img {
       max-width: 150px;
       max-height: 70px;
@@ -216,7 +232,21 @@
         </div>
         <div>
           <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
-          <div class="fine-print">{{ c.fine_print }}</div>
+          {% if c.fine_print %}
+          {% if c.get_full_btn_url %}
+            <div class="fine-print">
+              <a class="fine-print__link"
+                href="{{ c.get_full_btn_url }}"
+                target="_blank"
+                rel="nofollow noopener noreferrer">
+                {{ c.fine_print }}
+              </a>
+            </div>
+          {% else %}
+            <div class="fine-print">{{ c.fine_print }}</div>
+          {% endif %}
+        {% endif %}
+
         </div>
       </div>
     {% endfor %}
