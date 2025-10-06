@@ -101,17 +101,31 @@ class Showcase(models.Model):
             hosts.add(h_ascii)
         return hosts
 
-def matches_host(self, ascii_host: str) -> bool:
-    return ascii_host.lower() in self.domains_ascii_set()
+    def matches_host(self, ascii_host: str) -> bool:
+        """
+        Сравнивает текущий домен (punycode/ascii) с доменами витрины.
+        Работает и с кириллицей, и с punycode.
+        """
+        if not ascii_host:
+            return False
+        ascii_host = ascii_host.lower()
+        # человекочитаемый вариант (на случай кириллицы в БД)
+        try:
+            human = idna.decode(ascii_host).lower()
+        except Exception:
+            human = ascii_host
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base = slugify(self.name or "") or "showcase"
-            cand, n = base, 2
-            while Showcase.objects.filter(slug=cand).exclude(pk=self.pk).exists():
-                cand = f"{base}-{n}"; n += 1
-            self.slug = cand
-        super().save(*args, **kwargs)
+        for d in self.domains_list():  # уже нормализует строки/декодирует
+            dl = d.lower()
+            if dl == ascii_host or dl == human:
+                return True
+            # на случай если в domains_list вернулась кириллица — сравним в punycode
+            try:
+                if idna.encode(dl, uts46=True).decode("ascii").lower() == ascii_host:
+                    return True
+            except Exception:
+                pass
+        return False
 
 
 

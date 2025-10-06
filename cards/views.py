@@ -34,18 +34,12 @@ def _showcase_matches_host(showcase: Showcase, ascii_host: str) -> bool:
 
 # ---------- публичка ----------
 def index(request):
-    """Корень сайта: находим витрину по домену и ведём на неё (или 404)."""
     host = canonical_host(request)
     qs = Showcase.objects.order_by("-created_at", "-id")
-
-    candidates = [s for s in qs if _showcase_matches_host(s, host)]
+    candidates = [s for s in qs if s.matches_host(host)]
     if not candidates:
         raise Http404("Витрина для этого домена не настроена")
-
-    # приоритет витрине со slug='main', иначе первая
     sc = next((s for s in candidates if (s.slug or "").lower() == "main"), candidates[0])
-
-    # редирект на ЧПУ витрины (если имя маршрута другое — поменяй на своё)
     return redirect("showcase_detail", slug=sc.slug)
 
 
@@ -74,27 +68,17 @@ def showcase_add(request):
 
 
 def showcase_detail(request, slug):
-    """Витрина: выбираем по slug + домен, рендерим нужную тему, отдаём только её карточки."""
     host = canonical_host(request)
-
-    # берём все витрины с таким slug и выбираем подходящую по домену
     qs = Showcase.objects.filter(slug=slug).order_by("-created_at", "-id")
-    sc = None
-    for s in qs:
-        if _showcase_matches_host(s, host):
-            sc = s
-            break
+    sc = next((s for s in qs if s.matches_host(host)), None)
     if sc is None:
-        # в DEBUG можно показать первую попавшуюся, в PROD — 404
         if settings.DEBUG and qs.exists():
             sc = qs.first()
         else:
             raise Http404("Витрина не найдена для этого домена")
-
     cards = (sc.cards.filter(active=True)
              .select_related("logo")
              .order_by("order_index", "id"))
-
     template_name = f"themes/{sc.template}/index.html" if sc.template else "index.html"
     return render(request, template_name, {"showcase": sc, "cards": cards})
 
