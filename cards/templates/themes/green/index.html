@@ -5,10 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Займы онлайн</title>
-  <link rel="stylesheet" href="{% static 'themes/green/style.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'themes/green/style.css' %}">
 </head>
 <body>
 
+  <!-- белая шапка, логотип слева, ровно по краю сетки -->
   <header class="site-header">
     <div class="container header__row header__row--left">
       <a class="site-logo" href="/">
@@ -20,6 +21,7 @@
     </div>
   </header>
 
+  <!-- чёрная полоса с лид-текстом -->
   <section class="promo-bar">
     <div class="container promo__inner">
       <p class="promo__title">Мы подберём займ для Вас!</p>
@@ -27,33 +29,39 @@
     </div>
   </section>
 
+  <!-- сетка карточек -->
   <main class="wrap">
     <section class="grid">
       {% for c in cards %}
       <article class="card">
+        <!-- бренд на всю ширину -->
         <div class="card__brand">
           {% with logo=c.logo %}
             {% if logo and logo.image %}
               <img class="card__logo" src="{{ logo.image.url }}" alt="{{ logo.name|default:'Логотип' }}">
             {% endif %}
           {% endwith %}
+
         </div>
 
+        <!-- длинная чёрная линия почти на всю ширину -->
         <div class="card__divider"></div>
 
+        <!-- ниже: слева условия (2 строки, с отступом), справа сумма -->
         <div class="card__content">
           <div class="card__meta card__meta--stack">
-            <div class="card__note">{{ c.rate_line|default:"0% в день" }}</div>
+            <div class="card__note">{{ c.rate_line|default:"0% / день" }}</div>
             <div class="card__note">{{ c.age_line|default:"от 18 лет" }}</div>
           </div>
           <div class="card__amount">{{ c.price|default:"100000" }} ₽</div>
         </div>
 
-        {% if c.get_full_btn_url %}
-          <a class="card__btn" href="{{ c.get_full_btn_url }}" target="_blank" rel="noopener noreferrer">
-            {{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}
-          </a>
-        {% endif %}
+
+          {% if c.get_full_btn_url %}
+            <a class="card__btn" href="{{ c.get_full_btn_url }}" target="_blank" rel="noopener noreferrer">
+              {{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}
+            </a>
+          {% endif %}
 
         {% if c.fine_print %}
           <div class="fine-print">{{ c.fine_print }}</div>
@@ -65,6 +73,7 @@
     </section>
   </main>
 
+  <!-- блок «наши выгоды» -->
   <section class="benefits">
     <div class="container">
       <h2 class="benefits__title">Наши выгоды</h2>
@@ -78,6 +87,7 @@
     </div>
   </section>
 
+  <!-- тёмный подвал -->
   <footer class="bottom-bar">
     <div class="container">
       <p class="bottom-bar__links">
@@ -91,18 +101,18 @@
     </div>
   </footer>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    if (!location.search) return;
-    document.querySelectorAll('.card a.card__btn').forEach(link => {
-      try {
-        const u = new URL(link.getAttribute('href'), location.origin);
-        const add = new URLSearchParams(location.search);
-        add.forEach((v,k)=>{ if(!u.searchParams.has(k)) u.searchParams.set(k,v) });
-        link.setAttribute('href', u.toString());
-      } catch(e) {}
-    });
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (!location.search) return;
+  document.querySelectorAll('.card a.card__btn').forEach(link => {
+    try {
+      const u = new URL(link.getAttribute('href'), location.origin);
+      const add = new URLSearchParams(location.search);
+      add.forEach((v,k)=>{ if(!u.searchParams.has(k)) u.searchParams.set(k,v) });
+      link.setAttribute('href', u.toString());
+    } catch(e) {}
   });
-  </script>
+});
+</script>
 </body>
 </html>
