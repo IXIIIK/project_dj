@@ -13,7 +13,10 @@
     --brand-2: #2F86FF;   /* hover-синий */
     --lime: #4EA7FF;      /* чтобы всё, что завязано на --lime, тоже стало синим */
     --lime-dark: #2F86FF;
-  }
+  /* ...твои переменные... */
+    --brand-box-h: 64px;  /* фиксированная высота полосы с логотипом */
+    --logo-h: 40px;       /* целевая высота самих логотипов */
+}
   
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.35 -apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif}
@@ -57,13 +60,34 @@
     border:1px solid var(--border);
     border-radius:10px;
     box-shadow:var(--shadow);
-    padding:14px 18px;        /* было 10–12 */
-    min-height:150px;         /* добавили высоту */
+    padding:14px 18px;
+    min-height:150px;
+    display:flex;              /* NEW */
+    flex-direction:column;     /* NEW */
   }
   
-  .card__brand{display:block}
-  .card__logo{max-height:32px;object-fit:contain}
-  .card__brand-text{font-weight:700;font-size:14px;color:#4b5563}
+/* Полоса бренда фиксированной высоты, контент по центру */
+  .card__brand{
+    display:flex;              /* было block */
+    align-items:center;
+    gap:12px;
+    min-height:var(--brand-box-h);  /* NEW */
+  }
+  .card__logo{
+    height:var(--logo-h);
+    width:auto;
+    max-width:100%;
+    object-fit:contain;
+    flex:0 0 auto;
+  }
+  .card__brand-text{
+    font-weight:700;
+    font-size:14px;
+    color:#4b5563;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
   
   /* длинная чёрная линия */
   .card__divider{ height:1px; background:#222; margin:10px 0 12px; border-radius:1px; }
@@ -77,16 +101,14 @@
   
   /* кнопка полегче */
   .card__btn{
+    margin-top:auto;           /* ключ для выравнивания по низу */
     display:flex; align-items:center; justify-content:center; gap:8px;
     width:100%;
-    margin-top: 15px;
     padding:14px 18px;
     border-radius:16px;
     font-size:14px; font-weight:700; text-transform:uppercase;
     text-decoration:none;
     color:#fff;
-  
-    /* важно: сначала даём fallback-цвет, потом градиент */
     background: var(--brand);
     background-image: linear-gradient(180deg, var(--brand), var(--brand-2));
     border:1px solid var(--brand-2);

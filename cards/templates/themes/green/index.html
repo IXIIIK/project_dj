@@ -38,10 +38,9 @@
           <div class="card__brand">
             {% with logo=c.logo %}
               {% if logo and logo.image %}
-                <img src="{{ logo.image.url }}" alt="{{ logo.name|default:'Логотип' }}">
+                <img class="card__logo" src="{{ logo.image.url }}" alt="{{ logo.name|default:'Логотип' }}">
               {% endif %}
             {% endwith %}
-            <span class="card__brand-text">{{ c.title }}</span>
           </div>
 
         <!-- длинная чёрная линия почти на всю ширину -->
