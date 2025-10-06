@@ -14,8 +14,8 @@
     --lime: #4EA7FF;      /* чтобы всё, что завязано на --lime, тоже стало синим */
     --lime-dark: #2F86FF;
   /* ...твои переменные... */
-    --brand-box-h: 64px;  /* фиксированная высота полосы с логотипом */
-    --logo-h: 40px;       /* целевая высота самих логотипов */
+    --brand-box-h: 72px;  /* фиксированная высота зоны логотипа */
+    --logo-h: 44px;      /* целевая высота самих логотипов */
 }
   
   *{box-sizing:border-box}
@@ -55,45 +55,58 @@
   @media (max-width:520px){.grid{grid-template-columns:1fr}}
   
   /* ====== Card ====== */
-  .card{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:10px;
-    box-shadow:var(--shadow);
-    padding:14px 18px;
-    min-height:150px;
-    display:flex;              /* NEW */
-    flex-direction:column;     /* NEW */
-  }
-  
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  padding:14px 18px;
+  display:grid;                         /* ← было flex/none */
+  grid-template-rows: var(--brand-box-h) 1px 1fr auto;
+  row-gap:12px;
+  min-height:150px;
+}
+
 /* Полоса бренда фиксированной высоты, контент по центру */
-  .card__brand{
-    display:flex;              /* было block */
-    align-items:center;
-    gap:12px;
-    min-height:var(--brand-box-h);  /* NEW */
-  }
-  .card__logo{
-    height:var(--logo-h);
-    width:auto;
-    max-width:100%;
-    object-fit:contain;
-    flex:0 0 auto;
-  }
-  .card__brand-text{
-    font-weight:700;
-    font-size:14px;
-    color:#4b5563;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
+.card__brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  overflow:hidden;
+}
+.card__logo{
+  height:var(--logo-h);
+  width:auto;
+  max-width:100%;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.card__brand-text{
+  font-weight:700;
+  font-size:14px;
+  color:#4b5563;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
   
   /* длинная чёрная линия */
-  .card__divider{ height:1px; background:#222; margin:10px 0 12px; border-radius:1px; }
+.card__divider{
+  grid-row:2;
+  height:1px;
+  background:#222;
+  border-radius:1px;
+  margin:0;                    /* важно убрать разные отступы */
+}
   
   /* блок под линией: слева условия, справа сумма */
-  .card__content{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.card__content{
+  grid-row:3;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
   .card__meta{color:#8b949e}
   .card__meta--stack{ padding-left:10px; margin:0; }
   .card__note{ font-size:13px; line-height:1.35; }
@@ -113,6 +126,8 @@
     background-image: linear-gradient(180deg, var(--brand), var(--brand-2));
     border:1px solid var(--brand-2);
     box-shadow:0 8px 22px rgba(47,111,255,.35);
+    grid-row:4;
+    margin-top:0;  
   }
   
   .card__btn:hover{
