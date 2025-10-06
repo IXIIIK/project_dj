@@ -42,8 +42,26 @@ def _get_showcase_by_key(request, key: str) -> Showcase:
 
 # ---------- публичка ----------
 def index(request):
-    cards = Card.objects.filter(active=True).order_by("order_index", "id")
-    return render(request, "index.html", {"cards": cards})
+    """Корень сайта: выбираем витрину по домену и уводим на её slug."""
+    host = canonical_host(request)
+
+    # все витрины, отсортируем «посвежее» вперёд
+    qs = Showcase.objects.order_by("-created_at", "-id")
+
+    # кандидаты по текущему домену
+    candidates = [s for s in qs if s.matches_host(host)]
+
+    if candidates:
+        # приоритет витрине со slug 'main', иначе первая из списка
+        sc = next((s for s in candidates if (s.slug or "").lower() == "main"), candidates[0])
+        return redirect("showcase_detail", slug=sc.slug)
+
+    # если домен не привязан ни к одной витрине:
+    # вариант A: 404
+    raise Http404("Витрина для этого домена не настроена")
+
+    # вариант B (если хочешь заглушку вместо 404):
+    # return render(request, "index.html", {"cards": []})
 
 
 @login_required
