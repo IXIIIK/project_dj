@@ -16,6 +16,8 @@
   --gap:12px;
   --thick:1px;
   --line-color:rgba(16,35,63,.20);
+  --brand-box-h: 72px;  /* фиксированная высота зоны логотипа */
+  --logo-h: 44px;  
 }
 
 /* базовая типографика */
@@ -142,9 +144,15 @@ footer {
 
 /* Карточка */
 .card{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  padding:var(--card-pad);display:flex;flex-direction:column;gap:10px;min-height:210px;
-  transition:transform .15s,box-shadow .15s;overflow:hidden;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  padding:14px 18px;
+  display:grid;                         /* ← было flex/none */
+  grid-template-rows: var(--brand-box-h) 1px 1fr auto;
+  row-gap:12px;
+  min-height:150px;
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(22,44,90,.14)}
 
