@@ -6,6 +6,11 @@
   <title>Быстрые займы на карту</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+
+    :root{
+    --brand-box-h: 72px;  /* фиксированная высота зоны под логотип */
+    --logo-h: 44px;       /* высота логотипа */
+  }
     body { font-family: system-ui, sans-serif; margin:0; background:#f0f7fc; color:#111827; }
     .container { max-width:1150px; margin:0 auto; padding:0 20px;}
 
@@ -165,6 +170,92 @@
       margin-top:30px;
     }
 
+    .cards .card{
+  background:#fff;
+  border:1px solid #e7edf3;
+  border-radius:10px;
+  padding:14px 18px;
+  box-shadow:0 2px 0 rgba(0,0,0,.03), 0 1px 0 rgba(0,0,0,.04);
+
+  /* ключ: жёсткая геометрия */
+  display:grid;
+  grid-template-rows: var(--brand-box-h) 1px auto auto auto; /* brand | divider | lines | btn | fine */
+  row-gap:12px;
+  min-height:150px;
+}
+
+/* зона логотипа */
+.cards .card .card__brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.cards .card .card__logo{
+  height:var(--logo-h);
+  width:auto;
+  max-width:100%;
+  object-fit:contain;
+}
+
+/* разделительная линия на одной высоте */
+.cards .card .card__divider{
+  grid-row:2;
+  height:1px;
+  background:#222;
+  border-radius:1px;
+  margin:0;
+}
+
+/* характеристики */
+.cards .card .card__lines{
+  grid-row:3;
+  display:grid;
+  gap:8px;
+}
+.cards .card .card__lines .line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#6b7280;
+  font-size:13px;
+}
+
+/* кнопка по низу */
+.cards .card .card__btn{
+  grid-row:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  padding:12px 16px;
+  border-radius:12px;
+  background:#4EA7FF;
+  background-image:linear-gradient(180deg,#4EA7FF,#2F86FF);
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  border:1px solid #2F86FF;
+  box-shadow:0 8px 22px rgba(47,111,255,.35);
+}
+.cards .card .card__btn:hover{ filter:brightness(.98); }
+.cards .card .card__btn:active{ transform:translateY(1px); }
+
+/* мелкий текст — показываем и делаем ссылкой */
+.cards .card .fine-print{
+  grid-row:5;
+  margin-top:4px;
+  color:#98a1b3;
+  font-size:12px;
+  line-height:1.35;
+  text-align:center;
+}
+.cards .card .fine-print__link{
+  color:inherit;
+  text-decoration:underline;
+}
+.cards .card .fine-print__link:hover{ text-decoration:none; }
 
   </style>
 </head>
@@ -197,20 +288,45 @@
   <div class="cards">
     {% for c in cards|slice:":3" %}
       <div class="card">
-        <div>
-          <div class="card-logo">
-            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
-          </div>
-          <div class="card-lines">
-            <div><span>Сумма</span><span>{{ c.price }}</span></div>
-            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
-            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
-          </div>
+        <!-- зона логотипа -->
+        <div class="card__brand">
+          {% if c.logo %}
+            <img class="card__logo" src="{{ c.logo.image.url }}" alt="{{ c.title }}">
+          {% endif %}
         </div>
-        <div>
-          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
-          <div class="fine-print">{{ c.fine_print }}</div>
+
+        <!-- разделитель (всегда на одной высоте) -->
+        <div class="card__divider"></div>
+
+        <!-- характеристики -->
+        <div class="card__lines">
+          <div class="line"><span>Сумма</span><span>{{ c.price }}</span></div>
+          <div class="line"><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+          <div class="line"><span>Возраст</span><span>{{ c.age_line }}</span></div>
         </div>
+
+        <!-- кнопка -->
+        {% if c.get_full_btn_url %}
+          <a href="{{ c.get_full_btn_url }}" class="btn card__btn" target="_blank" rel="noopener">
+            {{ c.btn_text }}
+          </a>
+        {% endif %}
+
+        <!-- мелкий текст = ссылка на ту же кнопку -->
+        {% if c.fine_print %}
+          {% if c.get_full_btn_url %}
+            <div class="fine-print">
+              <a class="fine-print__link"
+                href="{{ c.get_full_btn_url }}"
+                target="_blank"
+                rel="nofollow noopener noreferrer">
+                {{ c.fine_print }}
+              </a>
+            </div>
+          {% else %}
+            <div class="fine-print">{{ c.fine_print }}</div>
+          {% endif %}
+        {% endif %}
       </div>
     {% endfor %}
   </div>

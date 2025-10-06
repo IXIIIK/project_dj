@@ -260,3 +260,21 @@
   outline:none;
 }
 
+
+.grid .card .fine-print{
+  display:block !important;            /* перебиваем старое скрытие */
+  margin-top:8px;
+  color:#98a1b3;
+  font-size:12px;
+  line-height:1.35;
+  text-align:center;
+  /* если карточка на CSS Grid (brand, divider, content, btn) — положим в 5-ю строку */
+  grid-row: 5;
+}
+
+.grid .card .fine-print__link{
+  color:inherit;
+  text-decoration:underline;
+}
+.grid .card .fine-print__link:hover{ text-decoration:none; }
+
