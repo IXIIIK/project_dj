@@ -17,4 +17,8 @@ urlpatterns = [
     path("<int:pk>/cards/<int:cid>/edit/", views.card_edit, name="card_edit"),
     path("<int:pk>/cards/<int:cid>/delete/", views.card_delete, name="card_delete"),
     path("<int:pk>/cards/<int:cid>/toggle/", views.card_toggle, name="card_toggle"),
+
+    path("logos/search/", views.logos_search, name="logos_search"),
+
+    path("showcases/suggest/", views.showcases_suggest, name="showcases_suggest"),
 ]

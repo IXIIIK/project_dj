@@ -45,6 +45,29 @@
   <div class="wrap">
     <div class="topbar">
       <h2>Витрины</h2>
+
+      <form method="get" class="toolbar" style="display:flex;gap:8px;align-items:center;margin:0 0 14px;">
+        <input type="text"
+              id="search-showcase"
+              name="q"
+              value="{{ q }}"
+              placeholder="Найти витрину…"
+              list="showcase-suggest"
+              style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;min-width:260px;">
+        <datalist id="showcase-suggest"></datalist>
+
+        <select name="per_page" style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;">
+          {% for n in per_page_options %}
+            <option value="{{ n }}" {% if per_page == n %}selected{% endif %}>{{ n }}/стр</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="btn">Искать</button>
+        {% if q %}
+          <a href="{% url 'showcases_admin' %}" class="btn btn-sm" style="margin-left:6px;">Сброс</a>
+        {% endif %}
+      </form>
+
       <a class="btn" href="{% url 'logos_admin' %}">Логотипы</a>
       <a class="btn" href="{% url 'showcase_add' %}">+ Добавить витрину</a>
     </div>
@@ -137,5 +160,42 @@
       </div>
     {% endif %}
   </div>
+
+
+  <script>
+    (function(){
+      const input = document.getElementById('search-showcase');
+      const box   = document.getElementById('showcase-suggest');
+      if (!input || !box) return;
+
+      let t = null;
+      input.addEventListener('input', () => {
+        clearTimeout(t);
+        const q = input.value.trim();
+        // чтобы не спамить бекенд — ждём 200мс и шлём только с 1 символа
+        t = setTimeout(async () => {
+          try {
+            const url = new URL("{% url 'showcases_suggest' %}", window.location.origin);
+            if (q.length >= 1) url.searchParams.set('q', q);
+            const res = await fetch(url, {credentials: 'same-origin'});
+            if (!res.ok) return;
+            const data = await res.json();
+            box.innerHTML = '';
+            (data.results || []).forEach(item => {
+              const opt = document.createElement('option');
+              opt.value = item.name;           // подставится в инпут
+              opt.label = item.label || item.name;
+              box.appendChild(opt);
+            });
+          } catch(e) { /* тихо игнорируем */ }
+        }, 200);
+      });
+
+      // Подгрузить подсказки при фокусе (пустой q = последние добавленные)
+      input.addEventListener('focus', () => input.dispatchEvent(new Event('input')));
+    })();
+    </script>
+ 
+  
 </body>
 </html>

@@ -72,7 +72,20 @@
               {{ c.btn_text|default:"ПОЛУЧИТЬ ДЕНЬГИ" }}
             </a>
           {% endif %}
-        <div class="fine-print">{{ c.fine_print|default:'Решение по заявке принимается в течение нескольких минут.' }}</div>
+          {% if c.fine_print %}
+          {% if c.get_full_btn_url %}
+            <div class="fine-print">
+              <a class="fine-print__link"
+                href="{{ c.get_full_btn_url }}"
+                target="_blank"
+                rel="nofollow noopener noreferrer">
+                {{ c.fine_print }}
+              </a>
+            </div>
+          {% else %}
+            <div class="fine-print">{{ c.fine_print }}</div>
+          {% endif %}
+        {% endif %}
       </article>
     {% endfor %}
 

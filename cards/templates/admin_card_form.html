@@ -68,5 +68,66 @@
       href="{% url 'cards_admin' pk=showcase.id %}">Отмена</a>
   </form>
 </div>
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+
+<style>
+  .sel-logo-item{ display:flex; align-items:center; gap:8px; }
+  .sel-logo-item img{ height:20px; width:auto; object-fit:contain; }
+</style>
+
+<script>
+(function(){
+  function formatLogo (data) {
+    if (data.loading) return data.text;
+    var $c = $('<span class="sel-logo-item"/>');
+    if (data.img) $c.append($('<img/>', {src: data.img, alt: ''}));
+    $c.append(document.createTextNode(data.text || ''));
+    return $c;
+  }
+  function formatLogoSelection (data) { return data.text || ''; }
+
+  $(function(){
+    var $el = $("#id_logo");
+    if (!$el.length) return;
+
+    var url = $el.data("search-url");
+    var showcase = $el.data("showcase");
+
+    $el.select2({
+      width: "100%",
+      allowClear: true,
+      minimumInputLength: 1,             // ← Показать предзагруженные опции сразу, а поиск — с 1 символа
+      placeholder: $el.data("placeholder") || "Найти логотип…",
+      ajax: {
+        url: url,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          var payload = { q: params.term || "", page: params.page || 1 };
+          if (showcase) payload.showcase = showcase;
+          return payload;
+        },
+        processResults: function (data, params) {
+          params.page = params.page || 1;
+          return {
+            results: data.results || [],
+            pagination: { more: data.pagination && data.pagination.more }
+          };
+        },
+        cache: true
+      },
+      templateResult: formatLogo,
+      templateSelection: formatLogoSelection,
+      escapeMarkup: function (m) { return m; }
+    });
+  });
+})();
+</script>
+
+
 </body>
 </html>

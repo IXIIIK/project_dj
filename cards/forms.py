@@ -3,6 +3,8 @@ from pathlib import Path
 from django import forms
 from django.conf import settings
 from .models import Showcase, Card, Logo
+from django.urls import reverse
+
 
 # ---------------- utils ----------------
 
@@ -172,25 +174,59 @@ class CardForm(forms.ModelForm):
             "order_index", "active",
         ]
         widgets = {
-            "btn_url": forms.URLInput(attrs={
-                "placeholder": "https://partner.ru/apply"
+            "btn_url": forms.URLInput(attrs={"placeholder": "https://partner.ru/apply"}),
+            "logo": forms.Select(attrs={
+                "id": "id_logo",
+                "data-placeholder": "Найти логотип…",
+                # data-search-url добавим ниже, когда reverse доступен
             }),
         }
-        help_texts = {
-            "btn_url": ""  # уберём help_text из подсказки под полем
-        }
+        help_texts = { "btn_url": "" }
 
     def __init__(self, *args, showcase=None, **kwargs):
         super().__init__(*args, **kwargs)
+
         if showcase is not None:
             self.fields["showcase"].initial = showcase
             self.fields["showcase"].widget = forms.HiddenInput()
+
+        # --- ПРЕДЗАГРУЗКА: первые 50 логотипов по имени ---
+        preload_ids = list(
+            Logo.objects.order_by("name").values_list("pk", flat=True)[:50]
+        )
+
+        # учтём уже выбранный логотип (при редактировании) или присланный в POST
+        selected_id = None
+        if getattr(self.instance, "logo_id", None):
+            selected_id = self.instance.logo_id
+        elif self.data.get("logo"):
+            selected_id = self.data.get("logo")
+
+        if selected_id:
+            try:
+                selected_id = int(selected_id)
+                if selected_id not in preload_ids:
+                    preload_ids.append(selected_id)
+            except (TypeError, ValueError):
+                pass
+
+        # финальный queryset БЕЗ distinct() и БЕЗ среза
+        self.fields["logo"].queryset = (
+            Logo.objects.filter(pk__in=preload_ids).order_by("name")
+        )
+
+        # атрибуты для JS-поиска
+        self.fields["logo"].widget.attrs.update({
+            "id": "id_logo",
+            "data-placeholder": "Найти логотип…",
+            "data-search-url": reverse("logos_search"),
+            "data-showcase": str(getattr(showcase, "pk", "")) or "",
+        })
 
     def clean_btn_url(self):
         u = (self.cleaned_data.get("btn_url") or "").strip()
         if not u:
             return u
-        # добавим https:// если пользователь не указал схему
         if not re.match(r"^https?://", u, re.I):
             u = "https://" + u.lstrip("/")
         return u

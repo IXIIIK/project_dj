@@ -333,22 +333,35 @@
 
   <!-- ===== MORE OFFERS ===== -->
   <h2>Дополнительные предложения</h2>
-  <div class="cards">
+<div class="cards">
     {% for c in cards|slice:"3:" %}
       <div class="card">
-        <div>
-          <div class="card-logo">
-            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
-          </div>
-          <div class="card-lines">
-            <div><span>Сумма</span><span>{{ c.price }}</span></div>
-            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
-            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
-          </div>
+        <!-- зона логотипа -->
+        <div class="card__brand">
+          {% if c.logo %}
+            <img class="card__logo" src="{{ c.logo.image.url }}" alt="{{ c.title }}">
+          {% endif %}
         </div>
-        <div>
-          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
-          {% if c.fine_print %}
+
+        <!-- разделитель (всегда на одной высоте) -->
+        <div class="card__divider"></div>
+
+        <!-- характеристики -->
+        <div class="card__lines">
+          <div class="line"><span>Сумма</span><span>{{ c.price }}</span></div>
+          <div class="line"><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+          <div class="line"><span>Возраст</span><span>{{ c.age_line }}</span></div>
+        </div>
+
+        <!-- кнопка -->
+        {% if c.get_full_btn_url %}
+          <a href="{{ c.get_full_btn_url }}" class="btn card__btn" target="_blank" rel="noopener">
+            {{ c.btn_text }}
+          </a>
+        {% endif %}
+
+        <!-- мелкий текст = ссылка на ту же кнопку -->
+        {% if c.fine_print %}
           {% if c.get_full_btn_url %}
             <div class="fine-print">
               <a class="fine-print__link"
@@ -362,8 +375,6 @@
             <div class="fine-print">{{ c.fine_print }}</div>
           {% endif %}
         {% endif %}
-
-        </div>
       </div>
     {% endfor %}
   </div>
@@ -373,20 +384,45 @@
   <div class="cards">
     {% for c in cards|slice:":3" %}
       <div class="card">
-        <div>
-          <div class="card-logo">
-            {% if c.logo %}<img src="{{ c.logo.image.url }}" alt="{{ c.title }}">{% endif %}
-          </div>
-          <div class="card-lines">
-            <div><span>Сумма</span><span>{{ c.price }}</span></div>
-            <div><span>Ставка</span><span>{{ c.rate_line }}</span></div>
-            <div><span>Возраст</span><span>{{ c.age_line }}</span></div>
-          </div>
+        <!-- зона логотипа -->
+        <div class="card__brand">
+          {% if c.logo %}
+            <img class="card__logo" src="{{ c.logo.image.url }}" alt="{{ c.title }}">
+          {% endif %}
         </div>
-        <div>
-          <a href="{{ c.get_full_btn_url }}" class="btn" target="_blank">{{ c.btn_text }}</a>
-          <div class="fine-print">{{ c.fine_print }}</div>
+
+        <!-- разделитель (всегда на одной высоте) -->
+        <div class="card__divider"></div>
+
+        <!-- характеристики -->
+        <div class="card__lines">
+          <div class="line"><span>Сумма</span><span>{{ c.price }}</span></div>
+          <div class="line"><span>Ставка</span><span>{{ c.rate_line }}</span></div>
+          <div class="line"><span>Возраст</span><span>{{ c.age_line }}</span></div>
         </div>
+
+        <!-- кнопка -->
+        {% if c.get_full_btn_url %}
+          <a href="{{ c.get_full_btn_url }}" class="btn card__btn" target="_blank" rel="noopener">
+            {{ c.btn_text }}
+          </a>
+        {% endif %}
+
+        <!-- мелкий текст = ссылка на ту же кнопку -->
+        {% if c.fine_print %}
+          {% if c.get_full_btn_url %}
+            <div class="fine-print">
+              <a class="fine-print__link"
+                href="{{ c.get_full_btn_url }}"
+                target="_blank"
+                rel="nofollow noopener noreferrer">
+                {{ c.fine_print }}
+              </a>
+            </div>
+          {% else %}
+            <div class="fine-print">{{ c.fine_print }}</div>
+          {% endif %}
+        {% endif %}
       </div>
     {% endfor %}
   </div>

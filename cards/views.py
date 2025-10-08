@@ -10,6 +10,9 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import Showcase
 from config import settings
 import idna
+from django.http import JsonResponse
+from django.db.models import Q, Case, When, IntegerField
+
 
 
 
@@ -86,9 +89,56 @@ def showcase_detail(request, slug):
 # ---------- админка ----------
 @login_required
 def showcases_admin(request):
-    qs = Showcase.objects.order_by("-created_at", "-id")
-    page_obj = Paginator(qs, 10).get_page(request.GET.get("page"))
-    return render(request, "admin_showcases.html", {"page_obj": page_obj})
+    q = (request.GET.get("q") or "").strip()
+    try:
+        per_page = int(request.GET.get("per_page") or 10)
+    except ValueError:
+        per_page = 10
+    per_page = max(5, min(per_page, 100))
+
+    qs = Showcase.objects.all()
+    if q:
+        qs = qs.filter(Q(name__icontains=q) | Q(slug__icontains=q))
+
+    qs = qs.order_by("-created_at", "-id")
+    page_obj = Paginator(qs, per_page).get_page(request.GET.get("page"))
+
+    return render(
+        request,
+        "admin_showcases.html",
+        {
+            "page_obj": page_obj,
+            "q": q,
+            "per_page": per_page,
+            "per_page_options": [10, 20, 30, 50],   # ← вот это
+        },
+    )
+
+
+@login_required
+def showcases_suggest(request):
+    q = (request.GET.get("q") or "").strip()
+    qs = Showcase.objects.all()
+
+    if q:
+        qs = (qs
+              .filter(Q(name__icontains=q) | Q(slug__icontains=q))
+              .annotate(priority=Case(
+                  When(name__istartswith=q, then=0),
+                  When(slug__istartswith=q, then=0),
+                  default=1,
+                  output_field=IntegerField(),
+              ))
+              .order_by("priority", "name"))
+    else:
+        qs = qs.order_by("-created_at")
+
+    data = [
+        {"id": s.id, "name": s.name, "slug": s.slug, "label": f"{s.name} ({s.slug})"}
+        for s in qs[:10]
+    ]
+    return JsonResponse({"results": data})
+
 
 @login_required
 def cards_admin(request, pk):
@@ -196,8 +246,26 @@ def showcase_delete(request, pk):
 @login_required
 def logos_admin(request):
     qs = Logo.objects.order_by("-id")
-    page_obj = Paginator(qs, 20).get_page(request.GET.get("page"))
-    return render(request, "admin_logos.html", {"page_obj": page_obj})
+
+    # безопасно читаем per_page из GET
+    try:
+        per_page = int(request.GET.get("per_page", 20))
+    except ValueError:
+        per_page = 20
+    per_page = max(8, min(per_page, 200))  # от 8 до 200
+
+    page_number = request.GET.get("page")
+    paginator = Paginator(qs, per_page)
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "admin_logos.html",
+        {
+            "page_obj": page_obj,
+            "per_page": per_page,
+        },
+    )
 
 @login_required
 def logo_add(request):
@@ -215,3 +283,23 @@ def logo_delete(request, pk):
     logo = get_object_or_404(Logo, pk=pk)
     logo.delete()
     return redirect("logos_admin")
+
+
+@login_required
+def logos_search(request):
+    q = (request.GET.get("q") or "").strip()
+    page = int(request.GET.get("page") or 1)
+    per_page = 20
+
+    qs = Logo.objects.all().order_by("name")
+    if q:
+        qs = qs.filter(name__icontains=q)
+
+    paginator = Paginator(qs, per_page)
+    page_obj = paginator.get_page(page)
+
+    results = [
+        {"id": str(logo.pk), "text": logo.name or f"Логотип #{logo.pk}", "img": (logo.image.url if logo.image else "")}
+        for logo in page_obj.object_list
+    ]
+    return JsonResponse({"results": results, "pagination": {"more": page_obj.has_next()}})

@@ -329,10 +329,21 @@
           </div>
         </a>
 
-        {% if c.fine_print or c.advertiser %}
+        {% if c.fine_print %}
+        {% if c.get_full_btn_url %}
+          <div class="fine-print">
+            <a class="fine-print__link"
+              href="{{ c.get_full_btn_url }}"
+              target="_blank"
+              rel="nofollow noopener noreferrer">
+              {{ c.fine_print }}
+            </a>
+          </div>
+        {% else %}
           <div class="fine-print">{{ c.fine_print }}</div>
         {% endif %}
-       {% endfor %}
+        {% endif %}
+      {% endfor %}
 
       </div>
     </section>

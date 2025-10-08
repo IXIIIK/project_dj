@@ -43,6 +43,21 @@
       margin-top: 30px;
       color: #5A7BFF;
     }
+
+    .pager{
+      display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; justify-content:center;
+      margin:18px 0;
+    }
+    .pager__btn, .pager__num{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:36px; height:36px; padding:0 10px;
+      border:1px solid #e5e7eb; border-radius:8px; background:#fff;
+      text-decoration:none; color:#111827; font-weight:600;
+    }
+    .pager__btn--disabled{ opacity:.5; pointer-events:none; }
+    .pager__num--active{ background:#111827; color:#fff; border-color:#111827; }
+    .pager__size{ margin-left:12px; }
+    .pager__size select{ padding:6px 8px; border-radius:8px; border:1px solid #e5e7eb; }
   </style>
 </head>
 <body>
@@ -63,6 +78,50 @@
       <div>Пока нет логотипов.</div>
     {% endfor %}
   </div>
+
+  {% comment %} ... твой .logos-grid выше ... {% endcomment %}
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pager">
+  {% if page_obj.has_previous %}
+    <a class="pager__btn" href="?page={{ page_obj.previous_page_number }}&per_page={{ per_page }}">← Назад</a>
+  {% else %}
+    <span class="pager__btn pager__btn--disabled">← Назад</span>
+  {% endif %}
+
+  {# укороченный ряд номеров #}
+  {% for i in page_obj.paginator.page_range %}
+    {% if i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+      {% if i == page_obj.number %}
+        <span class="pager__num pager__num--active">{{ i }}</span>
+      {% else %}
+        <a class="pager__num" href="?page={{ i }}&per_page={{ per_page }}">{{ i }}</a>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a class="pager__btn" href="?page={{ page_obj.next_page_number }}&per_page={{ per_page }}">Вперёд →</a>
+  {% else %}
+    <span class="pager__btn pager__btn--disabled">Вперёд →</span>
+  {% endif %}
+
+  <form method="get" class="pager__size">
+    <input type="hidden" name="page" value="1"/>
+    <label>
+      На странице:
+    <select name="per_page" onchange="this.form.submit()">
+      <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
+      <option value="16" {% if per_page == 16 %}selected{% endif %}>16</option>
+      <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+      <option value="24" {% if per_page == 24 %}selected{% endif %}>24</option>
+      <option value="32" {% if per_page == 32 %}selected{% endif %}>32</option>
+      <option value="48" {% if per_page == 48 %}selected{% endif %}>48</option>
+    </select>
+    </label>
+  </form>
+</nav>
+{% endif %}
 
   <a href="{% url 'showcases_admin' %}" class="backlink">← Назад к витринам</a>
 </div>
