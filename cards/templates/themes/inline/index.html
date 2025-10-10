@@ -1,0 +1,353 @@
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Manrope', sans-serif;
+  color: #0f172a;
+}
+
+/* 💡 ЭТО — главный контейнер для липкого футера */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* растягиваем на высоту окна */
+}
+
+.loans-section {
+  position: relative;
+  background: linear-gradient(to bottom, #fbfcff 0%, #f2f6ff 100%);
+  text-align: center;
+  padding: 10px 20px 140px; /* ⬅️ было 40px — теперь минимальный верхний отступ */
+  overflow: hidden;
+}
+
+.loans-section h2 {
+  font-size: 44px;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  margin: 0 0 30px 0;
+  line-height: 1.1;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80px;
+  flex-wrap: nowrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  color: #0f172a;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap; /* 💡 фиксирует текст в одну линию */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+}
+
+.feature.long {
+  max-width: 480px; /* позволяет длинному тексту не ломать верстку */
+  white-space: normal; /* а этот можно разрешить перенос, чтобы на мобильных всё влезало */
+}
+
+.check {
+  color: #00a651;
+  font-size: 18px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* 📱 адаптив */
+@media (max-width: 1000px) {
+  .features {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .feature {
+    white-space: normal;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* --------------------------------- */
+
+.cards-section {
+  padding: 20px 0 60px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Карточка */
+.card {
+  background: transparent;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 24px 50px 10px;
+  transition: all 0.2s ease;
+}
+
+.card__content {
+  display: flex;
+  align-items: center; /* Центровка по вертикали */
+  justify-content: space-between;
+  gap: 60px;
+}
+
+/* Логотип */
+.card__brand {
+  flex: 0 0 220px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.card__logo {
+  max-height: 70px; /* увеличено */
+  width: auto;
+  object-fit: contain;
+}
+
+/* Данные */
+.card__lines {
+  display: flex;
+  justify-content: space-around;
+  flex: 1;
+  text-align: center;
+  align-items: center;
+}
+
+.value {
+  font-size: 17px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Кнопка */
+.card__btn {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 11px 28px;
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.card__btn:hover {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Мелкий текст — вплотную под карточкой */
+.fine-print-wrapper {
+  text-align: center;
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 0; /* убрали отступ */
+  padding-top: 3px;
+  line-height: 1.3;
+  transform: translateY(4px); /* прижимаем ближе к границе */
+}
+
+.fine-print__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fine-print__link:hover {
+  text-decoration: underline;
+}
+
+/* Hover эффект */
+.card:hover {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+/* 📱 адаптив */
+@media (max-width: 900px) {
+  .card__content {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .card {
+    padding: 20px 20px 10px;
+  }
+
+  .card__brand {
+    justify-content: center;
+  }
+
+  .card__btn {
+    width: 100%;
+  }
+
+  .fine-print-wrapper {
+    text-align: center;
+    transform: none;
+    padding-top: 6px;
+  }
+}
+
+/* --------------------------------- */
+
+main {
+  flex: 1; /* растягивает контент */
+}
+
+.site-footer {
+  margin-top: auto; /* прижимает футер к низу */
+  background: #f4f7fc;
+  padding: 60px 20px 40px;
+  text-align: left;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.site-footer p {
+  margin: 6px 0;
+}
+
+/* адаптив */
+@media (max-width: 900px) {
+  .site-footer {
+    text-align: center;
+    padding: 40px 16px 30px;
+  }
+
+  .footer-container {
+    max-width: 90%;
+  }
+}
+
+
+
+</style>
+<body>
+    <div class="page">
+        <main>
+            <section class="loans-section">
+            <div class="container">
+                <h2>Займы на карту 24/7</h2>
+                <div class="features">
+                <div class="feature">
+                    <span class="check">✔</span>
+                    <p>Без комиссий</p>
+                </div>
+                <div class="feature">
+                    <span class="check">✔</span>
+                    <p>Одобрение 96%</p>
+                </div>
+                <div class="feature long">
+                    <span class="check">✔</span>
+                    <p>Для получения нужной суммы вы можете оформить 2–3 займа в разных МФО!</p>
+                </div>
+                </div>
+            </div>
+
+            <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 180">
+                <path fill="#ffffff" fill-opacity="1"
+                d="M0,96 C240,160 480,160 720,120 C960,80 1200,100 1440,140 L1440,320 L0,320 Z">
+                </path>
+            </svg>
+            </section>
+
+
+            <section class="cards-section">
+            <div class="cards">
+                {% for c in cards %}
+                <div class="card">
+                    <div class="card__content">
+                    <!-- логотип -->
+                    <div class="card__brand">
+                        {% if c.logo %}
+                        <img class="card__logo" src="{{ c.logo.image.url }}" alt="{{ c.title }}">
+                        {% endif %}
+                    </div>
+
+                    <!-- данные -->
+                    <div class="card__lines">
+                        <div class="value">{{ c.price }}</div>
+                        <div class="value">{{ c.rate_line }}</div>
+                        <div class="value">{{ c.age_line }}</div>
+                    </div>
+
+                    <!-- кнопка -->
+                    {% if c.get_full_btn_url %}
+                        <a href="{{ c.get_full_btn_url }}" class="btn card__btn" target="_blank" rel="noopener">
+                        {{ c.btn_text }}
+                        </a>
+                    {% endif %}
+                    </div>
+
+                    <!-- мелкий текст (вплотную под границей) -->
+                    {% if c.fine_print %}
+                    <div class="fine-print-wrapper">
+                        {% if c.get_full_btn_url %}
+                        <a href="{{ c.get_full_btn_url }}" class="fine-print__link" target="_blank" rel="nofollow noopener noreferrer">
+                            {{ c.fine_print }}
+                        </a>
+                        {% else %}
+                        {{ c.fine_print }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            </section>
+        </main>
+
+            <footer class="site-footer">
+                <div class="footer-container">
+                    <p>© 2025 Онлайн займы</p>
+                    <p>
+                    Сайт НЕ является представительством МФО или банком, не осуществляет выдачу займов и кредитов.
+                    Все рекомендуемые на сайте кредитные учреждения имеют соответствующие лицензии.
+                    Условия неуплаты можно уточнить на сайте МФО.
+                    </p>
+                    <p>ИП Игнатьева Ольга Юрьевна ОГРНИП 321470400066488</p>
+                </div>
+            </footer>
+
+    </div>
+</body>
